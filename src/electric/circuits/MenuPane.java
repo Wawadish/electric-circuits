@@ -5,10 +5,19 @@
  */
 package electric.circuits;
 
+import javafx.scene.layout.Pane;
+
 /**
  *
  * @author Wawa
  */
-public class MenuPane {
+public class MenuPane extends Pane{
+    
+    
+    public MenuPane(){
+        super();
+        setStyle("-fx-background-color: black;");
+        setPrefSize(Main.WIDTH - Main.WIDTH / 4,Main. HEIGHT / 10);
+    }
     
 }

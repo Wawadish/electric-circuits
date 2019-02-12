@@ -5,10 +5,18 @@
  */
 package electric.circuits;
 
+import javafx.scene.layout.Pane;
+
 /**
  *
  * @author Wawa
  */
-public class SideBarPane {
+public class SideBarPane extends Pane{
+    
+    public SideBarPane(){
+        super();
+        setStyle("-fx-background-color: grey;");
+        setPrefSize(Main.WIDTH / 4,Main. HEIGHT);
+    }
     
 }
