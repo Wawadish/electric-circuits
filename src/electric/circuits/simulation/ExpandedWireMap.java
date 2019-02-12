@@ -16,6 +16,8 @@ public class ExpandedWireMap {
     
     private final Map<ElectricWire, ExpandedWire> map = new IdentityHashMap<>();
     
+    
+    
     private ExpandedWire expand(ElectricWire wire) {
 	ExpandedWire ew = map.get(wire);
 	if (ew != null)
