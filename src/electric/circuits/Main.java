@@ -21,8 +21,7 @@ public class Main extends Application {
 
     private HBox hbox = new HBox();
     private VBox vbox = new VBox();
-    public static final int WIDTH = 1280;
-    public static final int HEIGHT = 720;
+    public static final int WIDTH = 1280, HEIGHT = 960;
 
     public static void main(String args[]) {
         launch(args);
@@ -30,7 +29,8 @@ public class Main extends Application {
 
     @Override
     public void start(Stage primaryStage) throws Exception {
-        hbox.getChildren().add(vbox);
+        vbox.getChildren().addAll(new MenuPane(), new SandboxPane(), new InfoPane());
+        hbox.getChildren().addAll(new SideBarPane(), vbox);
         primaryStage.setWidth(WIDTH);
         primaryStage.setHeight(HEIGHT);
         Scene scene = new Scene(hbox, primaryStage.getWidth(), primaryStage.getHeight());

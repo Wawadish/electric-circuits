@@ -5,10 +5,17 @@
  */
 package electric.circuits;
 
+import javafx.scene.layout.Pane;
+
 /**
  *
  * @author Wawa
  */
-public class SandboxPane {
-    
+public class SandboxPane extends Pane{
+
+    public SandboxPane(){
+        super();
+        setStyle("-fx-background-color: red;");
+        setPrefSize(Main.WIDTH - Main.WIDTH / 4,Main. HEIGHT - Main.HEIGHT/10 - Main.HEIGHT/4);
+    }
 }

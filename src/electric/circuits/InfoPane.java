@@ -5,10 +5,19 @@
  */
 package electric.circuits;
 
+import javafx.scene.layout.Pane;
+
 /**
  *
  * @author Wawa
  */
-public class InfoPane {
+public class InfoPane extends Pane{
+    
+    
+    public InfoPane(){
+        super();
+        setStyle("-fx-background-color: orange;");
+        setPrefSize(Main.WIDTH - Main.WIDTH / 4,Main. HEIGHT / 4);
+    }
     
 }
