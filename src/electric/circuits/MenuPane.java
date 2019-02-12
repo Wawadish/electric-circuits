@@ -17,7 +17,7 @@ public class MenuPane extends Pane{
     public MenuPane(){
         super();
         setStyle("-fx-background-color: black;");
-        setPrefSize(Main.WIDTH - Main.WIDTH / 4,Main. HEIGHT / 10);
+        setPrefSize(Main.WIDTH - Main.WIDTH / 5,Main. HEIGHT / 10);
     }
     
 }

@@ -17,7 +17,7 @@ public class InfoPane extends Pane{
     public InfoPane(){
         super();
         setStyle("-fx-background-color: orange;");
-        setPrefSize(Main.WIDTH - Main.WIDTH / 4,Main. HEIGHT / 4);
+        setPrefSize(Main.WIDTH - Main.WIDTH / 5,Main. HEIGHT / 4);
     }
     
 }
