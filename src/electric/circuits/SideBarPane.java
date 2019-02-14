@@ -17,6 +17,7 @@ public class SideBarPane extends Pane{
         super();
         setStyle("-fx-background-color: grey;");
         setPrefSize(Main.WIDTH / 4,Main. HEIGHT);
+        
     }
     
 }

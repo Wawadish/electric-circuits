@@ -36,5 +36,6 @@ public class Main extends Application {
         Scene scene = new Scene(hbox, primaryStage.getWidth(), primaryStage.getHeight());
         primaryStage.setScene(scene);
         primaryStage.show();
+        MenuPane pane = new MenuPane();
     }
 }

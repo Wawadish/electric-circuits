@@ -5,6 +5,7 @@
  */
 package electric.circuits;
 
+import javafx.scene.control.Label;
 import javafx.scene.layout.Pane;
 
 /**
@@ -12,6 +13,9 @@ import javafx.scene.layout.Pane;
  * @author Wawa
  */
 public class InfoPane extends Pane{
+    
+    private Label title = new Label("Equations and Configurations");
+    
     
     
     public InfoPane(){
