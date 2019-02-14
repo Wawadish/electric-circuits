@@ -37,7 +37,7 @@ public class MenuPane extends Pane{
     public MenuPane(){
         super();
         setStyle("-fx-background-color: black;");
-        setPrefSize(Main.WIDTH - Main.WIDTH / 4,Main. HEIGHT / 5);
+        setPrefSize(Main.WIDTH - Main.WIDTH / 5,Main. HEIGHT / 5);
         
          save_button = new Button("Save");
          save_button.setLayoutX(100);
