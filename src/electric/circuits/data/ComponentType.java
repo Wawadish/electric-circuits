@@ -9,7 +9,7 @@ public enum ComponentType {
     BATTERY,
     LED,
     RESISTANCE;
-
+    /*
     public ElectricComponent create() {
 	switch (this) {
 	    case BATTERY:
@@ -22,5 +22,5 @@ public enum ComponentType {
 		throw new AssertionError("Unimplemented case " + this);
 	}
     }
-
+    */
 }
