@@ -8,20 +8,21 @@ import java.util.Set;
  * @author Tomer Moran
  */
 public class ElectricWire {
-    private final ElectricComponent[] endpoints;
-    private final Set<ElectricWire> wires;
 
-    public ElectricWire() {
-	this.endpoints = new ElectricComponent[2];
-	this.wires = new HashSet<>();
-    }
+	private final ElectricConnection[] endpoints;
+	private final Set<ElectricWire> wires;
 
-    public ElectricComponent[] endpoints() {
-	return endpoints;
-    }
+	public ElectricWire() {
+		this.endpoints = new ElectricConnection[2];
+		this.wires = new HashSet<>();
+	}
 
-    public Set<ElectricWire> wires() {
-	return wires;
-    }
-    
+	public ElectricConnection[] endpoints() {
+		return endpoints;
+	}
+	
+	public Set<ElectricWire> wires() {
+		return wires;
+	}
+
 }

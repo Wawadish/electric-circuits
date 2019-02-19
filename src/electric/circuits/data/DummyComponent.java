@@ -6,8 +6,8 @@ package electric.circuits.data;
  */
 public class DummyComponent extends ElectricComponent {
 
-    public DummyComponent() {
-	super(null);
-    }
-    
+	public DummyComponent() {
+		super(null);
+	}
+
 }

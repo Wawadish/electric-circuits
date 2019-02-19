@@ -6,21 +6,21 @@ package electric.circuits.data;
  */
 public enum ComponentType {
 
-    BATTERY,
-    LED,
-    RESISTANCE;
+	BATTERY,
+	LED,
+	RESISTANCE;
 
-    public ElectricComponent create() {
-	switch (this) {
-	    case BATTERY:
-		return new BatteryComponent();
-	    case LED:
-		return new LedComponent();
-	    case RESISTANCE:
-		return new Resistance();
-	    default:
-		throw new AssertionError("Unimplemented case " + this);
+	public ElectricComponent create() {
+		switch (this) {
+			case BATTERY:
+				//return new BatteryComponent();
+			case LED:
+				//return new LedComponent();
+			case RESISTANCE:
+				//return new Resistance();
+			default:
+				throw new AssertionError("Unimplemented case " + this);
+		}
 	}
-    }
 
 }
