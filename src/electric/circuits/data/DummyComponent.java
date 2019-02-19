@@ -6,8 +6,15 @@ package electric.circuits.data;
  */
 public class DummyComponent extends ElectricComponent {
 
-	public DummyComponent() {
+	private final String name;
+	
+	public DummyComponent(String name) {
 		super(null);
+		this.name = name;
 	}
 
+	@Override
+	public String toString() {
+		return name;
+	}
 }

@@ -25,4 +25,18 @@ public class ElectricConnection {
 	public ElectricComponent component() {
 		return component;
 	}
+	
+	public ElectricWire wirePrevious() {
+		return left ? component.leftWire() : component.rightWire();
+	}
+	
+	public ElectricWire wireNext() {
+		return !left ? component.leftWire() : component.rightWire();
+	}
+
+	@Override
+	public String toString() {
+		return (left ? ">" + component : component + "<");
+	}
+
 }

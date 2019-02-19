@@ -2,6 +2,7 @@ package electric.circuits.simulation;
 
 import electric.circuits.data.ElectricConnection;
 import electric.circuits.data.ElectricWire;
+import electric.circuits.data.WireGroup;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.IdentityHashMap;
@@ -16,11 +17,13 @@ import java.util.Set;
  */
 public class ExpandedWireMap {
 
-	private final Map<ElectricWire, Set<ElectricConnection>> map = new IdentityHashMap<>();
+	public static final WireGroup EMPTY_GROUP = new WireGroup(Collections.EMPTY_SET, Collections.EMPTY_SET);
 
-	public Set<ElectricConnection> expand(ElectricWire start) {
+	private final Map<ElectricWire, WireGroup> map = new IdentityHashMap<>();
+
+	public WireGroup expand(ElectricWire start) {
 		if (start == null) {
-			return Collections.EMPTY_SET;
+			return EMPTY_GROUP;
 		}
 
 		if (map.get(start) != null) {
@@ -40,9 +43,16 @@ public class ExpandedWireMap {
 				continue;
 			}
 
-			// Add components
-			connections.add(w.endpoints()[0]);
-			connections.add(w.endpoints()[1]);
+			// Add connections
+			ElectricConnection e0 = w.endpoints()[0];
+			if (e0 != null) {
+				connections.add(e0);
+			}
+
+			ElectricConnection e1 = w.endpoints()[1];
+			if (e1 != null) {
+				connections.add(e1);
+			}
 
 			// Explore neighbor wires
 			for (ElectricWire w2 : w.wires()) {
@@ -56,14 +66,15 @@ public class ExpandedWireMap {
 			}
 		}
 
-		Set<ElectricConnection> set = Collections.unmodifiableSet(connections);
+		WireGroup group = new WireGroup(
+				Collections.unmodifiableSet(visited),
+				Collections.unmodifiableSet(connections));
 
 		// Record the results
 		for (ElectricWire wire : visited) {
-			map.put(wire, set);
+			map.put(wire, group);
 		}
 
-		return set;
+		return group;
 	}
-
 }
