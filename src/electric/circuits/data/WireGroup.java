@@ -18,6 +18,10 @@ public class WireGroup {
 	public Set<ElectricConnection> connections() {
 		return connections;
 	}
+	
+	public boolean sameCurrent() {
+		return connections.size() == 2;
+	}
 
 	@Override
 	public String toString() {

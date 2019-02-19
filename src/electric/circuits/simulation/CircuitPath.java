@@ -2,15 +2,20 @@ package electric.circuits.simulation;
 
 import electric.circuits.data.ElectricComponent;
 import electric.circuits.data.ElectricConnection;
-import electric.circuits.data.ElectricWire;
 import electric.circuits.data.WireGroup;
-import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedList;
-import java.util.Set;
 import java.util.stream.Stream;
 
 /**
+ * Represents a path between components. As this class is used during the search
+ * phase, it is not guaranteed to represent a closed loop, although
+ * {@code CircuitPath}s present in the final solution set should all be. When
+ * this is the case, the first and last nodes are the same.
+ *
+ * A {@code CircuitPath} stores not only the components of the circuit, but also
+ * the side from which they are connected. This is important notably during the
+ * search phase, in which one must distinguish between the two sides.
  *
  * @author Tomer Moran
  */
@@ -38,34 +43,21 @@ public class CircuitPath implements Iterable<ElectricConnection> {
 	public boolean contains(ElectricComponent comp) {
 		return connections.stream().anyMatch(c -> c.component() == comp);
 	}
-	
+
 	public boolean contains(WireGroup group, ExpandedWireMap wireMap) {
-		if (connections.size() < 2)
+		if (connections.size() < 2) {
 			return false;
-		
+		}
+
 		Iterator<ElectricConnection> it = connections.listIterator(1);
 		while (it.hasNext()) {
 			ElectricConnection conn = it.next();
-			if (group == wireMap.expand(conn.wirePrevious()))
+			if (group == wireMap.expand(conn.wirePrevious())) {
 				return true;
+			}
 		}
-		
+
 		return false;
-	}
-
-	public boolean isAllowed(WireGroup group, ElectricConnection connection, ExpandedWireMap map) {
-		for (ElectricConnection c : connections) {
-			if (c.component() == connection.component()) {
-				return false;
-			}
-
-			if (group == map.expand(connection.wirePrevious())) {
-				System.out.println(this + "; @ wire " + group + ": " + connection);
-				return false;
-			}
-		}
-
-		return true;
 	}
 
 	public CircuitPath append(ElectricConnection conn) {
