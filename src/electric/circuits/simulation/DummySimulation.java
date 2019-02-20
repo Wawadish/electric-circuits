@@ -1,5 +1,6 @@
 package electric.circuits.simulation;
 
+import electric.circuits.data.WireCrawler;
 import electric.circuits.Utils;
 import electric.circuits.data.DummyComponent;
 import electric.circuits.data.ElectricComponent;
@@ -46,7 +47,7 @@ public class DummySimulation {
 	private static Set<CircuitPath> explorePaths(ElectricComponent start, boolean left) {
 
 		// Prepare the search
-		ExpandedWireMap wireMap = new ExpandedWireMap();
+		WireCrawler wireMap = new WireCrawler();
 		Set<CircuitPath> solutions = new HashSet<>();
 		Queue<CircuitPath> queue = new LinkedList<>();
 		
@@ -58,7 +59,7 @@ public class DummySimulation {
 			CircuitPath path = queue.poll();
 
 			// Check if this wire group was already traversed
-			WireGroup group = path.next(wireMap);
+			WireGroup group = path.explore(wireMap);
 			if (path.contains(group, wireMap)) {
 				continue;
 			}

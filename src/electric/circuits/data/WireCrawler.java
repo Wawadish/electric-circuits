@@ -1,8 +1,5 @@
-package electric.circuits.simulation;
+package electric.circuits.data;
 
-import electric.circuits.data.ElectricConnection;
-import electric.circuits.data.ElectricWire;
-import electric.circuits.data.WireGroup;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.IdentityHashMap;
@@ -15,7 +12,7 @@ import java.util.Set;
  *
  * @author Tomer Moran
  */
-public class ExpandedWireMap {
+public class WireCrawler {
 
 	public static final WireGroup EMPTY_GROUP = new WireGroup(Collections.EMPTY_SET, Collections.EMPTY_SET);
 
