@@ -33,7 +33,7 @@ public class Main extends Application {
         hbox.getChildren().addAll(new SideBarPane(), vbox);
         primaryStage.setWidth(WIDTH);
         primaryStage.setHeight(HEIGHT);
-        Scene scene = new Scene(hbox, primaryStage.getWidth(), primaryStage.getHeight());
+        Scene scene = new Scene(hbox, WIDTH, HEIGHT);
         primaryStage.setScene(scene);
         primaryStage.show();
         MenuPane pane = new MenuPane();
