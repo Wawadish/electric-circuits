@@ -52,7 +52,7 @@ public class WireGroup {
 	 * @return {@code true} if there are 2 connections in this group;
 	 * {@code false} otherwise.
 	 */
-	public boolean sameCurrent() {
+	public boolean hasTwoConnections() {
 		return connections.size() == 2;
 	}
 

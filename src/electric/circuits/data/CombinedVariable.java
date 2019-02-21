@@ -36,8 +36,15 @@ public class CombinedVariable extends Variable {
 	 * @param coefficient the coefficient to use. May not be zero.
 	 */
 	public void add(Variable var, Double coefficient) {
-		if (var == this || var == null || Utils.equals(coefficient, 0))
+		if (var == this || var == null || Utils.equals(coefficient, 0)) {
 			throw new IllegalArgumentException();
+		}
+
+		// Do not allow nested CombinedVariables
+		if (var instanceof CombinedVariable) {
+			((CombinedVariable) var).bindings.forEach(this::add);
+			return;
+		}
 
 		// Add the coefficients in the map
 		bindings.merge(var, coefficient, Double::sum);
@@ -45,8 +52,9 @@ public class CombinedVariable extends Variable {
 
 	@Override
 	public boolean resolve() {
-		if (isSolved())
+		if (isSolved()) {
 			return true;
+		}
 
 		double result = 0;
 

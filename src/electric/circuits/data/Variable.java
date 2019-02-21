@@ -37,7 +37,7 @@ public class Variable {
 	 * unsolved.
 	 */
 	public double get() {
-		if (solved) {
+		if (isSolved()) {
 			return value.get();
 		}
 
@@ -54,11 +54,16 @@ public class Variable {
 
 	/**
 	 * Marks this {@code Variable} as solved, and assigns it the given numerical
-	 * value.
+	 * value. If this {@code Variable} is already solved, this method throws an exception.
 	 *
 	 * @param v the value to set.
+	 * @throws IllegalStateException if already solved.
 	 */
 	public void solve(double v) {
+		if (isSolved()) {
+			throw new IllegalStateException();
+		}
+
 		solved = true;
 		value.set(v);
 	}

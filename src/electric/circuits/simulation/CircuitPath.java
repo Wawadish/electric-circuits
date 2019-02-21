@@ -56,8 +56,9 @@ public class CircuitPath implements Iterable<ElectricConnection> {
 	 * {@code false} otherwise.
 	 */
 	public boolean contains(ElectricComponent comp) {
-		if (comp == null)
+		if (comp == null) {
 			return false;
+		}
 
 		return connections.stream().anyMatch(c -> c.component() == comp);
 	}
@@ -125,8 +126,9 @@ public class CircuitPath implements Iterable<ElectricConnection> {
 	 * {@code false} otherwise.
 	 */
 	public boolean isClosedWith(ElectricConnection conn) {
-		if (connections.isEmpty())
+		if (connections.isEmpty()) {
 			return false;
+		}
 
 		return connections.getFirst().equals(conn);
 	}
@@ -136,6 +138,10 @@ public class CircuitPath implements Iterable<ElectricConnection> {
 	 */
 	public Stream<ElectricComponent> components() {
 		return connections.stream().map(con -> con.component());
+	}
+
+	public Stream<WireGroup> wireGroups(WireCrawler map) {
+		return connections.stream().limit(size() - 1).map(c -> map.expand(c.wireNext()));
 	}
 
 	/**
