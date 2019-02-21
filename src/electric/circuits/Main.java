@@ -31,9 +31,9 @@ public class Main extends Application {
     public void start(Stage primaryStage) throws Exception {
         vbox.getChildren().addAll(new MenuPane(), new SandboxPane(), new InfoPane());
         hbox.getChildren().addAll(new SideBarPane(), vbox);
-        primaryStage.setWidth(WIDTH);
-        primaryStage.setHeight(HEIGHT);
-        Scene scene = new Scene(hbox, primaryStage.getWidth(), primaryStage.getHeight());
+        //primaryStage.setWidth(WIDTH);
+        //primaryStage.setHeight(HEIGHT);
+        Scene scene = new Scene(hbox, WIDTH, HEIGHT);
         primaryStage.setScene(scene);
         primaryStage.show();
         MenuPane pane = new MenuPane();

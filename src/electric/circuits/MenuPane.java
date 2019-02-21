@@ -48,7 +48,7 @@ public class MenuPane extends Pane{
           load_button.setLayoutY(20);
    
         real_time = new CheckBox();
-        real_time.setLayoutX(420);
+        real_time.setLayoutX(450);
         real_time.setLayoutY(25);
         
         real_time_label = new Label("Real-Time Simulation");
