@@ -30,14 +30,15 @@ public class Variable {
 
 	/**
 	 * Returns the value of this {@code Variable} <b>if, and only if, it is
-	 * declared as solved.</b> If that is not the case, an exception is thrown.
+	 * declared as solved or can be resolved.</b> If that is not the case, an
+	 * exception is thrown.
 	 *
-	 * @return the value of this {@code Variable} if solved.
+	 * @return the value of this {@code Variable} if solved or resolved.
 	 * @throws IllegalStateException if this {@code Variable} is marked as
-	 * unsolved.
+	 * unsolved and {@link #resolve} fails.
 	 */
 	public double get() {
-		if (isSolved()) {
+		if (isSolved() || resolve()) {
 			return value.get();
 		}
 
@@ -54,7 +55,8 @@ public class Variable {
 
 	/**
 	 * Marks this {@code Variable} as solved, and assigns it the given numerical
-	 * value. If this {@code Variable} is already solved, this method throws an exception.
+	 * value. If this {@code Variable} is already solved, this method throws an
+	 * exception.
 	 *
 	 * @param v the value to set.
 	 * @throws IllegalStateException if already solved.
@@ -79,5 +81,14 @@ public class Variable {
 	 */
 	public boolean resolve() {
 		return false;
+	}
+
+	/**
+	 *
+	 * @return the parent @{code Variable}, if any. If there is no parent,
+	 * returns {@code this}.
+	 */
+	public Variable parent() {
+		return this;
 	}
 }

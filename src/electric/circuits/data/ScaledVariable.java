@@ -10,6 +10,7 @@ package electric.circuits.data;
  *
  * @author Tomer Moran
  */
+@Deprecated
 public class ScaledVariable extends Variable {
 
 	/**

@@ -15,6 +15,7 @@ import java.util.Map.Entry;
  *
  * @author Tomer Moran
  */
+@Deprecated
 public class CombinedVariable extends Variable {
 
 	/**

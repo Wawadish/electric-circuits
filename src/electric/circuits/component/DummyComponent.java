@@ -1,4 +1,6 @@
-package electric.circuits.data;
+package electric.circuits.component;
+
+import electric.circuits.data.ElectricComponent;
 
 /**
  * Represents a dummy electric component used for testing.

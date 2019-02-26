@@ -35,6 +35,12 @@ public class BoundVariable extends Variable {
 	}
 
 	@Override
+	public Variable parent() {
+		Variable var = comp.current();
+		return (var instanceof BoundVariable) ? ((BoundVariable) var).parent() : var;
+	}
+
+	@Override
 	public double get() {
 		return comp.current().get();
 	}
