@@ -7,15 +7,29 @@ package electric.circuits;
 
 import electric.circuits.data.ComponentType;
 import java.awt.MouseInfo;
+import java.awt.Point;
 import java.io.File;
 import java.util.ArrayList;
+import javafx.animation.AnimationTimer;
+import javafx.animation.TranslateTransition;
+import javafx.beans.InvalidationListener;
+import javafx.beans.property.SimpleDoubleProperty;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.geometry.Insets;
+import javafx.geometry.Pos;
 import javafx.scene.control.ListCell;
 import javafx.scene.control.ListView;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.input.Dragboard;
+import javafx.scene.input.TransferMode;
+import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.Pane;
+import javafx.scene.layout.StackPane;
+import javafx.util.Duration;
 
 /**
  *
@@ -29,7 +43,8 @@ public class SideBarPane extends Pane {
     ArrayList<ListViewItem> listViewItems = new ArrayList<>();
     ObservableList<ListViewItem> items = FXCollections.observableArrayList();
     ListViewItem selectedItem;
-    ImageView temporaryImage;
+    public static ImageView temporaryImage;
+    AnimationTimer timer;
 
     public SideBarPane() {
         super();
@@ -72,20 +87,20 @@ public class SideBarPane extends Pane {
 
             //Gets the currently selected item
             selectedItem = listView.getSelectionModel().getSelectedItem();
-            System.out.println(selectedItem.getName());
-
-            //The image will follow the position of the mouse during the drag motion
             temporaryImage = new ImageView(selectedItem.getImage());
-            temporaryImage.setX(MouseInfo.getPointerInfo().getLocation().getX());
-            temporaryImage.setY(MouseInfo.getPointerInfo().getLocation().getY());
-            getChildren().add(temporaryImage);
+            StackPane.setAlignment(temporaryImage, Pos.TOP_LEFT);
 
+            Main.pane.getChildren().add(temporaryImage);
         });
-        listView.setOnDragDropped(e -> {
 
-            temporaryImage.setImage(null);
-
+        listView.setOnMouseDragged(e -> {
+            if (temporaryImage == null) {
+                return;
+            }
+            temporaryImage.setX(e.getX() - temporaryImage.getImage().getWidth()/2);
+            temporaryImage.setY(e.getY() - temporaryImage.getImage().getHeight()/2);
         });
+        
         //Adding ObservableItems to the ListView and defining the background color and dimensions of the ListView.
         listView.setItems(items);
         listView.setStyle("-fx-control-inner-background: grey;");
