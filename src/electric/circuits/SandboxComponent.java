@@ -6,6 +6,8 @@
 package electric.circuits;
 
 import electric.circuits.data.ElectricComponent;
+import javafx.beans.binding.DoubleBinding;
+import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
@@ -14,64 +16,59 @@ import javafx.scene.shape.Circle;
  *
  * @author stavr
  */
-public class SandboxComponent extends ImageView {
+
+public class SandboxComponent {
+
+	private static final double JUNCTION_RADIUS = 10;
+	private static final Image PLACEHOLDER = new Image("file:assets/images/placeholder.png");
 
 	private int gridX;
 	private int gridY;
-	private Circle junction1;
-	private Circle junction2;
+	private final Circle junction1;
+	private final Circle junction2;
+	private final ImageView imageView;
 
-	private boolean moved = true;
-
+	private final SandboxPane pane;
 	private final ElectricComponent component;
 
-	public SandboxComponent(ElectricComponent component) {
+	public SandboxComponent(SandboxPane pane, ElectricComponent component) {
+		this.pane = pane;
 		this.component = component;
-
-		initialize();
+		this.imageView = new ImageView(PLACEHOLDER);
+		this.junction1 = new Circle(JUNCTION_RADIUS);
+		this.junction2 = new Circle(JUNCTION_RADIUS);
 	}
 
-	private void initialize() {
-		double width = getImage().getWidth();
-		double height = img.getImage().getHeight();
+	public void initialize() {
+		// Initialize circles
+		junction1.setFill(Color.WHITE);
+		junction2.setFill(Color.WHITE);
+		junction1.setStroke(Color.BLACK);
+		junction2.setStroke(Color.BLACK);
 
-		//gets the right and left x coordinate of the image
-		double left_x = img.getX();
-		double right_x = img.getX() + width;
+		// Setup position bindings
+		junction1.centerXProperty().bind(imageView.xProperty());
+		junction2.centerXProperty().bind(imageView.xProperty().add(imageView.getImage().widthProperty()));
 
-		//gets the y coordinate of the midpoint of the image
-		double bottom = img.getY() - height;
-		double midpoint = (img.getY() - bottom) / 2;
+		DoubleBinding centerY = imageView.yProperty().add(imageView.getImage().heightProperty().divide(2));
+		junction1.centerYProperty().bind(centerY);
+		junction2.centerYProperty().bind(centerY);
 
-		//creates a circle that acts as a junction for the left side of the image
-		Circle leftC = new Circle(left_x, midpoint, 10);
-		leftC.setFill(Color.WHITE);
-		leftC.setStroke(Color.BLACK);
+		// Update the position of the ImageView
+		updatePosition();
 
-		//creates a circle that acts as a junction for the right side of the image
-		Circle rightC = new Circle(right_x, midpoint, 10);
-		rightC.setFill(Color.WHITE);
-		rightC.setStroke(Color.BLACK);
-
-		//adds the junctions to the pane
-		getChildren().addAll(leftC, rightC);
+		// Add the elements to the pane
+		pane.getChildren().addAll(imageView, junction1, junction2);
 	}
 
 	public void move(int gridX, int gridY) {
 		this.gridX = gridX;
 		this.gridY = gridY;
-		moved = true;
+		updatePosition();
 	}
 
 	private void updatePosition() {
-		if (moved) {
-
-			moved = false;
-		}
+		imageView.setX(gridX * SandboxPane.GRID_SIZE);
+		imageView.setY(gridY * SandboxPane.GRID_SIZE);
 	}
-
-	public void addTo(SandboxPane pane) {
-
-	}
-
 }

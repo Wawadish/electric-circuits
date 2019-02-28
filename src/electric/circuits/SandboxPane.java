@@ -1,10 +1,7 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package electric.circuits;
 
+import electric.circuits.component.DummyBatteryComponent;
+import electric.circuits.component.DummyComponent;
 import electric.circuits.data.ElectricComponent;
 import electric.circuits.data.Variable;
 import electric.circuits.simulation.SimulationContext;
@@ -15,54 +12,47 @@ import javafx.scene.image.ImageView;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
+import electric.circuits.simulation.SimulationContext;
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.Set;
+import javafx.scene.layout.AnchorPane;
 
 /**
  *
  * @author Wawa
  */
 public class SandboxPane extends AnchorPane {
-	
+
+	public static final double GRID_SIZE = 30;
+
 	private final SimulationContext simulation;
+	private final Set<SandboxComponent> components;
 
 	public SandboxPane() {
-		super();
+		this.components = new HashSet<>();
+		this.simulation = new SimulationContext();
+
 		setStyle("-fx-background-color: red;");
 		setPrefSize(Main.WIDTH - Main.WIDTH / 5, Main.HEIGHT - Main.HEIGHT / 10 - Main.HEIGHT / 4);
 
-		this.simulation = new SimulationContext();
+		addDummyComponents();
 	}
 
-	private void drawJunctions() {
-		for (SandboxComponent c : components) {
-			ImageView img = new ImageView((Image) null);
+	private void addDummyComponents() {
+		SandboxComponent battery = new SandboxComponent(this, new DummyBatteryComponent(simulation, "Battery", 10));
+		SandboxComponent led1 = new SandboxComponent(this, new DummyComponent(simulation, "LED1"));
+		SandboxComponent led2 = new SandboxComponent(this, new DummyComponent(simulation, "LED2"));
+		SandboxComponent led3 = new SandboxComponent(this, new DummyComponent(simulation, "LED3"));
+		SandboxComponent res = new SandboxComponent(this, new DummyComponent(simulation, "RES1"));
 
-			//gets the width and height of the image of the component
-			double width = img.getImage().getWidth();
-			double height = img.getImage().getHeight();
-
-			//gets the right and left x coordinate of the image
-			double left_x = img.getX();
-			double right_x = img.getX() + width;
-
-			//gets the y coordinate of the midpoint of the image
-			double bottom = img.getY() - height;
-			double midpoint = (img.getY() - bottom) / 2;
-
-			//creates a circle that acts as a junction for the left side of the image
-			Circle leftC = new Circle(left_x, midpoint, 10);
-			leftC.setFill(Color.WHITE);
-			leftC.setStroke(Color.BLACK);
-
-			//creates a circle that acts as a junction for the right side of the image
-			Circle rightC = new Circle(right_x, midpoint, 10);
-			rightC.setFill(Color.WHITE);
-			rightC.setStroke(Color.BLACK);
-
-			//adds the junctions to the pane
-			getChildren().addAll(leftC, rightC);
-
-		}
+		battery.move(10, 10);
+		led1.move(15, 10);
+		led2.move(15, 15);
+		led3.move(15, 20);
+		res.move(20, 20);
+		
+		components.addAll(Arrays.asList(battery, led1, led2, led3, res));
+		components.forEach(SandboxComponent::initialize);
 	}
-
-	
 }

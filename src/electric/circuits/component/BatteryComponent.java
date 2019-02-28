@@ -1,6 +1,7 @@
 package electric.circuits.component;
 
 import electric.circuits.data.ElectricComponent;
+import electric.circuits.simulation.SimulationContext;
 import javafx.scene.image.Image;
 
 /**
@@ -11,8 +12,8 @@ public class BatteryComponent extends ElectricComponent {
 
 	private double voltage;
 
-	public BatteryComponent(Image image) {
-		super(image);
+	public BatteryComponent(SimulationContext context) {
+		super(context);
 	}
 
 	public double voltage() {

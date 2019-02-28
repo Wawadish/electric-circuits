@@ -1,6 +1,6 @@
 package electric.circuits.component;
 
-import electric.circuits.data.ElectricComponent;
+import electric.circuits.simulation.SimulationContext;
 
 /**
  * Represents a dummy electric component used for testing.
@@ -11,8 +11,8 @@ public class DummyBatteryComponent extends BatteryComponent {
 
 	private final String name;
 
-	public DummyBatteryComponent(String name, double voltage) {
-		super(null);
+	public DummyBatteryComponent(SimulationContext context, String name, double voltage) {
+		super(context);
 		this.name = name;
 		setVoltage(voltage);
 	}

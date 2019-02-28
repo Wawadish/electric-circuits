@@ -11,7 +11,6 @@ import electric.circuits.data.ElectricConnection;
 import electric.circuits.data.ElectricWire;
 import electric.circuits.data.Variable;
 import electric.circuits.data.WireGroup;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.IdentityHashMap;
 import java.util.Iterator;
@@ -30,12 +29,14 @@ import org.ejml.simple.SimpleMatrix;
 public class DummySimulation {
 
 	public static void main(String[] args) {
+		SimulationContext context = new SimulationContext();
 		WireCrawler wireMap = new WireCrawler();
-		ElectricComponent battery = new DummyBatteryComponent("Battery", 10);
-		ElectricComponent led1 = new DummyComponent("LED1");
-		ElectricComponent led2 = new DummyComponent("LED2");
-		ElectricComponent led3 = new DummyComponent("LED3");
-		ElectricComponent res = new DummyComponent("RES1");
+		
+		ElectricComponent battery = new DummyBatteryComponent(context, "Battery", 10);
+		ElectricComponent led1 = new DummyComponent(context, "LED1");
+		ElectricComponent led2 = new DummyComponent(context, "LED2");
+		ElectricComponent led3 = new DummyComponent(context, "LED3");
+		ElectricComponent res = new DummyComponent(context, "RES1");
 
 		ElectricWire wire1 = new ElectricWire();
 		ElectricWire wire2 = new ElectricWire();
