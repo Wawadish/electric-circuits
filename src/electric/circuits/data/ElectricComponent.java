@@ -1,6 +1,7 @@
 package electric.circuits.data;
 
-import javafx.scene.image.Image;
+import electric.circuits.SandboxPane;
+import electric.circuits.simulation.SimulationContext;
 
 /**
  *
@@ -10,22 +11,12 @@ import javafx.scene.image.Image;
  */
 public class ElectricComponent {
 
-	private final Image image;
-	private Variable current;
+	private final SimulationContext context;
 	private ElectricWire leftWire, rightWire;
 	private double resistance;
 
-	public ElectricComponent(Image image) {
-		this.image = image;
-		this.current = new Variable();
-	}
-
-	/**
-	 *
-	 * @return the image to display for this component.
-	 */
-	public Image image() {
-		return image;
+	public ElectricComponent(SimulationContext context) {
+		this.context = context;
 	}
 
 	/**
@@ -34,7 +25,7 @@ public class ElectricComponent {
 	 * value is never {@code null}.
 	 */
 	public Variable current() {
-		return current;
+		return context.getVariable(this);
 	}
 
 	/**
@@ -44,11 +35,7 @@ public class ElectricComponent {
 	 * @throws NullPointerException if {@code current} is {@code null}.
 	 */
 	public void setCurrent(Variable current) {
-		if (current == null) {
-			throw new NullPointerException();
-		}
-
-		this.current = current;
+		context.setVariable(this, current);
 	}
 
 	/**
