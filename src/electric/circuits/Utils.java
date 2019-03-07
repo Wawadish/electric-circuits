@@ -5,6 +5,7 @@ import electric.circuits.data.ElectricComponent;
 import electric.circuits.data.ElectricConnection;
 import electric.circuits.data.ElectricWire;
 import javafx.scene.Node;
+import javafx.scene.image.Image;
 import javafx.scene.input.ClipboardContent;
 import javafx.scene.input.DataFormat;
 import javafx.scene.input.Dragboard;
@@ -46,10 +47,12 @@ public class Utils {
 	}
 
 	public static void startDrag(Node source, ComponentType type) {
+		Image image = type.getImage();
 		Dragboard db = source.startDragAndDrop(TransferMode.COPY);
-		db.setDragView(type.getImage());
-		
+		db.setDragView(image, image.getWidth() / 2, image.getHeight() / 2);
+
 		ClipboardContent cc = new ClipboardContent();
+		cc.put(DataFormat.IMAGE, image);
 		cc.put(DataFormat.PLAIN_TEXT, type);
 		db.setContent(cc);
 	}

@@ -4,20 +4,12 @@ import electric.circuits.component.DummyBatteryComponent;
 import electric.circuits.component.DummyComponent;
 import electric.circuits.data.ComponentType;
 import electric.circuits.data.ElectricComponent;
-import electric.circuits.data.Variable;
-import electric.circuits.simulation.SimulationContext;
-import java.util.IdentityHashMap;
-import java.util.Map;
 import javafx.scene.image.Image;
-import javafx.scene.image.ImageView;
-import javafx.scene.layout.AnchorPane;
-import javafx.scene.paint.Color;
-import javafx.scene.shape.Circle;
 import electric.circuits.simulation.SimulationContext;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
+import javafx.scene.image.Image;
 import javafx.scene.input.DataFormat;
 import javafx.scene.input.TransferMode;
 import javafx.scene.layout.AnchorPane;
@@ -33,9 +25,9 @@ public class SandboxPane extends AnchorPane {
 
 	// TODO: fix max grid size
 	public static final double GRID_SIZE = 30;
-	public static final int MAX_GRID_X = (int)(PREF_WIDTH / GRID_SIZE);
-	public static final int MAX_GRID_Y = (int)(PREF_HEIGHT / GRID_SIZE);
-	
+	public static final int MAX_GRID_X = (int) (PREF_WIDTH / GRID_SIZE);
+	public static final int MAX_GRID_Y = (int) (PREF_HEIGHT / GRID_SIZE);
+
 	private final SimulationContext simulation;
 	private final Set<SandboxComponent> components;
 
@@ -54,9 +46,12 @@ public class SandboxPane extends AnchorPane {
 		});
 
 		this.setOnDragDropped(e -> {
+			Image image = (Image) e.getDragboard().getContent(DataFormat.IMAGE);
 			ComponentType type = (ComponentType) e.getDragboard().getContent(DataFormat.PLAIN_TEXT);
-			addComponent((int) (e.getX() / GRID_SIZE), (int) (e.getY() / GRID_SIZE), type);
 
+			double mouseX = e.getX() - (image.getWidth() / 2);
+			double mouseY = e.getY() - (image.getHeight() / 2);
+			addComponent((int) (mouseX / GRID_SIZE), (int) (mouseY / GRID_SIZE), type);
 		});
 	}
 
