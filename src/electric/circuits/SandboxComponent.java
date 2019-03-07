@@ -1,8 +1,3 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package electric.circuits;
 
 import electric.circuits.data.ElectricComponent;
@@ -16,7 +11,6 @@ import javafx.scene.shape.Circle;
  *
  * @author stavr
  */
-
 public class SandboxComponent {
 
 	private static final double JUNCTION_RADIUS = 10;
@@ -70,5 +64,9 @@ public class SandboxComponent {
 	private void updatePosition() {
 		imageView.setX(gridX * SandboxPane.GRID_SIZE);
 		imageView.setY(gridY * SandboxPane.GRID_SIZE);
+	}
+
+	public ElectricComponent getComponent() {
+		return component;
 	}
 }
