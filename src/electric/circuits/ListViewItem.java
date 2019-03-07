@@ -13,40 +13,25 @@ import javafx.scene.image.Image;
  * @author Wawa
  */
 public class ListViewItem {
-    
-    private String name;
-    private Image image;
-    private ComponentType componentType;
-    
-    public ListViewItem(String name, Image image, ComponentType componentType){
-        this.name = name;
-        this.image = image;
-        this.componentType = componentType;
-    }
 
-    public String getName() {
-        return name;
-    }
+	private final String name;
+	private final ComponentType componentType;
 
-    public Image getImage() {
-        return image;
-    }
+	public ListViewItem(String name, ComponentType componentType) {
+		this.name = name;
+		this.componentType = componentType;
+	}
 
-    public ComponentType getComponentType() {
-        return componentType;
-    }
+	public String getName() {
+		return name;
+	}
 
-    public void setName(String name) {
-        this.name = name;
-    }
+	public Image getImage() {
+		return componentType.getImage();
+	}
 
-    public void setImage(Image image) {
-        this.image = image;
-    }
+	public ComponentType getComponentType() {
+		return componentType;
+	}
 
-    public void setComponentType(ComponentType componentType) {
-        this.componentType = componentType;
-    }
-    
-    
 }

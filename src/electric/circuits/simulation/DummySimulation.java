@@ -6,6 +6,7 @@ import electric.circuits.component.BatteryComponent;
 import electric.circuits.component.DummyBatteryComponent;
 import electric.circuits.data.BoundVariable;
 import electric.circuits.component.DummyComponent;
+import electric.circuits.data.ComponentType;
 import electric.circuits.data.ElectricComponent;
 import electric.circuits.data.ElectricConnection;
 import electric.circuits.data.ElectricWire;
@@ -31,12 +32,12 @@ public class DummySimulation {
 	public static void main(String[] args) {
 		SimulationContext context = new SimulationContext();
 		WireCrawler wireMap = new WireCrawler();
-		
+
 		ElectricComponent battery = new DummyBatteryComponent(context, "Battery", 10);
-		ElectricComponent led1 = new DummyComponent(context, "LED1");
-		ElectricComponent led2 = new DummyComponent(context, "LED2");
-		ElectricComponent led3 = new DummyComponent(context, "LED3");
-		ElectricComponent res = new DummyComponent(context, "RES1");
+		ElectricComponent led1 = new DummyComponent(context, ComponentType.LED, "LED1");
+		ElectricComponent led2 = new DummyComponent(context, ComponentType.LED, "LED2");
+		ElectricComponent led3 = new DummyComponent(context, ComponentType.LED, "LED3");
+		ElectricComponent res = new DummyComponent(context, ComponentType.RESISTOR, "RES1");
 
 		ElectricWire wire1 = new ElectricWire();
 		ElectricWire wire2 = new ElectricWire();
@@ -184,7 +185,7 @@ public class DummySimulation {
 
 	private static void printCurrents(ElectricComponent... comps) {
 		for (ElectricComponent c : comps) {
-			
+
 			System.out.println(String.format("%s: %.2f", c, c.current().get()));
 		}
 	}

@@ -32,9 +32,9 @@ public class SideBarPane extends Pane {
 		ObservableList<ListViewItem> listItems = FXCollections.observableArrayList();
 
 		// Add temporary components to the side list
-		listItems.add(new ListViewItem("Battery", PLACEHOLDER, ComponentType.BATTERY));
-		listItems.add(new ListViewItem("LED", PLACEHOLDER, ComponentType.LED));
-		listItems.add(new ListViewItem("Resistance", PLACEHOLDER, ComponentType.RESISTANCE));
+		listItems.add(new ListViewItem("Battery", ComponentType.BATTERY));
+		listItems.add(new ListViewItem("LED", ComponentType.LED));
+		listItems.add(new ListViewItem("Resistance", ComponentType.RESISTOR));
 
 		// Each cell of the ListView will have an image and text.
 		listView.setCellFactory(cellFactory());
@@ -44,12 +44,7 @@ public class SideBarPane extends Pane {
 			// Gets the currently selected item
 			ListViewItem item = listView.getSelectionModel().getSelectedItem();
 
-			Dragboard db = listView.startDragAndDrop(TransferMode.COPY);
-			db.setDragView(item.getImage());
-
-			ClipboardContent cc = new ClipboardContent();
-			cc.put(DataFormat.PLAIN_TEXT, item.getComponentType());
-			db.setContent(cc);
+			Utils.startDrag(listView, item.getComponentType());
 		});
 
 		//Adding ObservableItems to the ListView and defining the background color and dimensions of the ListView.

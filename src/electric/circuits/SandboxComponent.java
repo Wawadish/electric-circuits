@@ -14,7 +14,6 @@ import javafx.scene.shape.Circle;
 public class SandboxComponent {
 
 	private static final double JUNCTION_RADIUS = 10;
-	private static final Image PLACEHOLDER = new Image("file:assets/images/placeholder.png");
 
 	private int gridX;
 	private int gridY;
@@ -28,7 +27,7 @@ public class SandboxComponent {
 	public SandboxComponent(SandboxPane pane, ElectricComponent component) {
 		this.pane = pane;
 		this.component = component;
-		this.imageView = new ImageView(PLACEHOLDER);
+		this.imageView = new ImageView(component.getType().getImage());
 		this.junction1 = new Circle(JUNCTION_RADIUS);
 		this.junction2 = new Circle(JUNCTION_RADIUS);
 	}
@@ -53,6 +52,13 @@ public class SandboxComponent {
 
 		// Add the elements to the pane
 		pane.getChildren().addAll(imageView, junction1, junction2);
+
+		imageView.setOnDragDetected(e -> {
+			pane.getChildren().removeAll(imageView, junction1, junction2);
+			pane.components().remove(this);
+
+			Utils.startDrag(pane, component.getType());
+		});
 	}
 
 	public void move(int gridX, int gridY) {

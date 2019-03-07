@@ -11,11 +11,13 @@ import electric.circuits.simulation.SimulationContext;
  */
 public class ElectricComponent {
 
+	private final ComponentType type;
 	private final SimulationContext context;
 	private ElectricWire leftWire, rightWire;
 	private double resistance;
 
-	public ElectricComponent(SimulationContext context) {
+	public ElectricComponent(SimulationContext context, ComponentType type) {
+		this.type = type;
 		this.context = context;
 	}
 
@@ -97,4 +99,8 @@ public class ElectricComponent {
 		this.resistance = resistance;
 	}
 
+	// TODO: document
+	public ComponentType getType() {
+		return type;
+	}
 }
