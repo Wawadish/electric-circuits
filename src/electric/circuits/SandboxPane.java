@@ -111,4 +111,5 @@ public class SandboxPane extends AnchorPane {
     public SandboxComponent getSelectedComponent() {
         return selectedComponent;
     }
+
 }

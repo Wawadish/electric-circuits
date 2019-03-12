@@ -64,6 +64,16 @@ public class SandboxComponent {
             pane.setSelectedComponent(this);
             System.out.println("X: " + this.gridX + " Y: " + this.gridY);
             e.consume();
+			
+			InfoPane.topTitle.setVisible(true);
+			InfoPane.k_title.setVisible(true);
+			InfoPane.kir_eq.setVisible(true);
+			InfoPane.o_title.setVisible(true);
+			InfoPane.ohm_eq.setVisible(true);
+			InfoPane.resistance.setVisible(true);
+			InfoPane.resistance_box.setVisible(true);
+			InfoPane.voltage.setVisible(true);
+			InfoPane.voltage_box.setVisible(true);
         });
     }
 
