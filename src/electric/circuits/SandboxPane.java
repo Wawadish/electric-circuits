@@ -60,6 +60,7 @@ public class SandboxPane extends AnchorPane {
                     double mouseX = e.getX() / GRID_SIZE;
                     double mouseY = e.getY()/ GRID_SIZE;
                     
+                    
                     System.out.println("yeet");
                     
                     //Checks if the x y of the mouse is in the area of an image
@@ -69,6 +70,16 @@ public class SandboxPane extends AnchorPane {
                                 && (mouseY > sc.getGridY()) && (mouseY < sc.getGridY() + (imageBounds.getHeight())/ GRID_SIZE)){
                             selectedComponent = sc;
                             System.out.println(selectedComponent.getGridX() + " y : " + selectedComponent.getGridY());
+                            InfoPane.topTitle.setVisible(true);
+                            InfoPane.k_title.setVisible(true);
+                            InfoPane.kir_eq.setVisible(true);
+                            InfoPane.o_title.setVisible(true);
+                            InfoPane.ohm_eq.setVisible(true);
+                            InfoPane.resistance.setVisible(true);
+                            InfoPane.resistance_box.setVisible(true);
+                            InfoPane.voltage.setVisible(true);
+                            InfoPane.voltage_box.setVisible(true);
+                            
                         }
                     }
                 });

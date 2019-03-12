@@ -11,16 +11,16 @@ import javafx.scene.text.Font;
  */
 public class InfoPane extends Pane {
 
-	private Label topTitle;
-	private Label k_title;
-	private Label o_title;
-	private Label voltage;
-	private Label resistance;
+	public static Label topTitle;
+	public static Label k_title;
+	public static Label o_title;
+	public static Label voltage;
+	public static Label resistance;
 
-	private TextField kir_eq;
-	private TextField ohm_eq;
-	private TextField voltage_box;
-	private TextField resistance_box;
+	public static TextField kir_eq;
+	public static TextField ohm_eq;
+	public static TextField voltage_box;
+	public static TextField resistance_box;
 
 	public InfoPane() {
 		super();
