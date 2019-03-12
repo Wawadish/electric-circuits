@@ -9,6 +9,7 @@ import electric.circuits.simulation.SimulationContext;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
+import javafx.geometry.Bounds;
 import javafx.scene.image.Image;
 import javafx.scene.input.DataFormat;
 import javafx.scene.input.TransferMode;
@@ -30,6 +31,7 @@ public class SandboxPane extends AnchorPane {
 
 	private final SimulationContext simulation;
 	private final Set<SandboxComponent> components;
+        private SandboxComponent selectedComponent; 
 
 	public SandboxPane() {
 		this.components = new HashSet<>();
@@ -53,6 +55,24 @@ public class SandboxPane extends AnchorPane {
 			double mouseY = e.getY() - (image.getHeight() / 2);
 			addComponent((int) (mouseX / GRID_SIZE), (int) (mouseY / GRID_SIZE), type);
 		});
+                
+                this.setOnMouseClicked(e -> {
+                    double mouseX = e.getX() / GRID_SIZE;
+                    double mouseY = e.getY()/ GRID_SIZE;
+                    
+                    System.out.println("yeet");
+                    
+                    //Checks if the x y of the mouse is in the area of an image
+                    for(SandboxComponent sc : components){
+                        Bounds imageBounds = sc.getImageView().getLayoutBounds();
+                        if((mouseX > sc.getGridX()) && (mouseX < sc.getGridX() + (imageBounds.getWidth()/ GRID_SIZE)) 
+                                && (mouseY > sc.getGridY()) && (mouseY < sc.getGridY() + (imageBounds.getHeight())/ GRID_SIZE)){
+                            selectedComponent = sc;
+                            System.out.println(selectedComponent.getGridX() + " y : " + selectedComponent.getGridY());
+                        }
+                    }
+                });
+                
 	}
 
 	public Set<SandboxComponent> components() {
@@ -89,5 +109,12 @@ public class SandboxPane extends AnchorPane {
 		sc.initialize();
 		components.add(sc);
 	}
+        
+        public void deleteComponent(int x, int y){
+        }
+        
+        public void deleteLastComponent(){
+            this.components.remove(this.components.size() - 1);
+        }
 
 }
