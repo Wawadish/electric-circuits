@@ -9,7 +9,6 @@ import javafx.scene.image.ImageView;
  */
 public class SandboxComponent {
 
-
 	private int gridX;
 	private int gridY;
 	
@@ -46,24 +45,58 @@ public class SandboxComponent {
 
 			Utils.startDrag(pane, component.getType());
 		});
+		
+		imageView.setOnMouseClicked(e -> {
+            pane.setSelectedComponent(this);
+            System.out.println("X: " + this.gridX + " Y: " + this.gridY);
+            e.consume();
+			
+			InfoPane.topTitle.setVisible(true);
+			InfoPane.k_title.setVisible(true);
+			InfoPane.kir_eq.setVisible(true);
+			InfoPane.o_title.setVisible(true);
+			InfoPane.ohm_eq.setVisible(true);
+			InfoPane.resistance.setVisible(true);
+			InfoPane.resistance_box.setVisible(true);
+			InfoPane.voltage.setVisible(true);
+			InfoPane.voltage_box.setVisible(true);
+        });
 	}
+	
+	 public void removeFromPane() {
+        imageView.setVisible(false);
+        junction1.setVisible(false);
+        junction2.setVisible(false);
+    }
 
 	public void move(int gridX, int gridY) {
 		this.gridX = gridX;
 		this.gridY = gridY;
 		updatePosition();
 	}
-
-    public ImageView getImageView() {
-        return imageView;
-    }
-
+	
 	private void updatePosition() {
 		imageView.setX(gridX * SandboxPane.GRID_SIZE);
 		imageView.setY(gridY * SandboxPane.GRID_SIZE);
 	}
-
+	
 	public ElectricComponent getComponent() {
 		return component;
 	}
+	
+	public int getGridX() {
+        return gridX;
+    }
+
+    public int getGridY() {
+        return gridY;
+    }
+
+    public void setGridX(int gridX) {
+        this.gridX = gridX;
+    }
+
+    public void setGridY(int gridY) {
+        this.gridY = gridY;
+    }
 }
