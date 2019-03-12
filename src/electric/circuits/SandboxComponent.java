@@ -59,6 +59,12 @@ public class SandboxComponent {
 
             Utils.startDrag(pane, component.getType());
         });
+
+        imageView.setOnMouseClicked(e -> {
+            pane.setSelectedComponent(this);
+            System.out.println("X: " + this.gridX + " Y: " + this.gridY);
+            e.consume();
+        });
     }
 
     public void move(int gridX, int gridY) {
@@ -95,6 +101,11 @@ public class SandboxComponent {
     public ImageView getImageView() {
         return imageView;
     }
-    
+
+    public void removeFromPane() {
+        imageView.setVisible(false);
+        junction1.setVisible(false);
+        junction2.setVisible(false);
+    }
 
 }
