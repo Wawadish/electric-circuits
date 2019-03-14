@@ -1,19 +1,18 @@
 package electric.circuits;
 
+import electric.circuits.SandboxWire.WireDragData;
 import electric.circuits.component.DummyBatteryComponent;
 import electric.circuits.component.DummyComponent;
 import electric.circuits.data.ComponentType;
 import electric.circuits.data.ElectricComponent;
-import javafx.scene.image.Image;
 import electric.circuits.simulation.SimulationContext;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
-import javafx.geometry.Bounds;
 import javafx.scene.image.Image;
+import javafx.scene.input.ClipboardContent;
 import javafx.scene.input.DataFormat;
-import javafx.scene.input.KeyCode;
-import javafx.scene.input.KeyEvent;
+import javafx.scene.input.Dragboard;
 import javafx.scene.input.TransferMode;
 import javafx.scene.layout.AnchorPane;
 
@@ -35,6 +34,8 @@ public class SandboxPane extends AnchorPane {
     private final Set<SandboxComponent> components;
     private SandboxComponent selectedComponent;
 
+    private WireDragData wireDragData;
+
     public SandboxPane() {
         this.components = new HashSet<>();
         this.simulation = new SimulationContext();
@@ -45,17 +46,32 @@ public class SandboxPane extends AnchorPane {
         addDummyComponents();
 
         this.setOnDragOver(e -> {
-            e.acceptTransferModes(TransferMode.COPY);
+            e.acceptTransferModes(TransferMode.COPY, TransferMode.MOVE);
             e.consume();
+
+            if (e.getTransferMode() == TransferMode.MOVE) {
+                double mouseX = e.getX();
+                double mouseY = e.getY();
+
+                wireDragData.circle.setCenterX(Utils.snapToGrid(mouseX));
+                wireDragData.circle.setCenterY(Utils.snapToGrid(mouseY));
+            }
         });
 
         this.setOnDragDropped(e -> {
-            Image image = (Image) e.getDragboard().getContent(DataFormat.IMAGE);
-            ComponentType type = (ComponentType) e.getDragboard().getContent(DataFormat.PLAIN_TEXT);
+            if (e.getTransferMode() == TransferMode.COPY) {
+                Image image = (Image) e.getDragboard().getContent(DataFormat.IMAGE);
+                ComponentType type = (ComponentType) e.getDragboard().getContent(DataFormat.PLAIN_TEXT);
 
-            double mouseX = e.getX() - (image.getWidth() / 2);
-            double mouseY = e.getY() - (image.getHeight() / 2);
-            addComponent((int) (mouseX / GRID_SIZE), (int) (mouseY / GRID_SIZE), type);
+                double mouseX = e.getX() - (image.getWidth() / 2);
+                double mouseY = e.getY() - (image.getHeight() / 2);
+                addComponent(Utils.toGrid(mouseX), Utils.toGrid(mouseY), type);
+                return;
+            }
+
+            if (e.getTransferMode() == TransferMode.MOVE) {
+
+            }
         });
 
         this.setOnMouseClicked(e -> {
@@ -110,6 +126,14 @@ public class SandboxPane extends AnchorPane {
 
     public SandboxComponent getSelectedComponent() {
         return selectedComponent;
+    }
+
+    public void startWireDrag(WireDragData wireDragData) {
+        this.wireDragData = wireDragData;
+        Dragboard db = startDragAndDrop(TransferMode.MOVE);
+        ClipboardContent cc = new ClipboardContent();
+        cc.putString("wire123");
+        db.setContent(cc);
     }
 
 }
