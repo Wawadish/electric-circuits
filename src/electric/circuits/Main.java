@@ -1,10 +1,13 @@
 package electric.circuits;
 
+import java.awt.Point;
 import javafx.application.Application;
 import javafx.scene.Scene;
 import javafx.scene.input.KeyCode;
-import javafx.scene.layout.HBox;
-import javafx.scene.layout.VBox;
+import javafx.scene.layout.ColumnConstraints;
+import javafx.scene.layout.GridPane;
+import javafx.scene.layout.RowConstraints;
+import javafx.scene.layout.StackPane;
 import javafx.stage.Stage;
 
 /**
@@ -28,20 +31,40 @@ public class Main extends Application {
 
     @Override
     public void start(Stage stage) throws Exception {
-        HBox hbox = new HBox();
-        VBox vbox = new VBox();
 
-        vbox.getChildren().addAll(menuPane, sandboxPane, infoPane);
-        hbox.getChildren().addAll(sideBarPane, vbox);
+        StackPane stackPane = new StackPane();
+        GridPane gridPane = new GridPane();
 
-        stage.setWidth(WIDTH);
-        stage.setHeight(HEIGHT);
-        scene = new Scene(hbox, WIDTH, HEIGHT);
+        ColumnConstraints cc = new ColumnConstraints(WIDTH / 4);
+        RowConstraints rc = new RowConstraints(HEIGHT / 20);
+        gridPane.getColumnConstraints().addAll(cc, cc, cc, cc);
+        gridPane.getRowConstraints().addAll(rc, rc, rc, rc, rc, rc, rc, rc, rc, rc, rc, rc, rc, rc, rc, rc, rc, rc, rc, rc);
+        GridPane.setConstraints(sideBarPane, 0, 0, 1, 20);
+        GridPane.setConstraints(menuPane, 0, 0, 4, 1);
+        GridPane.setConstraints(infoPane, 0, 15, 4, 5);
+
+        stackPane.getChildren().addAll(sandboxPane, gridPane);
+
+        gridPane.getChildren().addAll(menuPane, infoPane, sideBarPane);
+        gridPane.getChildren().forEach(item -> {
+
+            item.setOpacity(0);
+            item.setOnMouseEntered(e -> {
+                item.setOpacity(100);
+            });
+            item.setOnMouseExited(e -> {
+                item.setOpacity(0);
+            });
+
+        });
+        scene = new Scene(stackPane, WIDTH, HEIGHT);
+
         scene.setOnKeyPressed(e -> {
             if (e.getCode() == KeyCode.BACK_SPACE && sandboxPane.getSelectedComponent() != null) {
                 sandboxPane.deleteComponent(sandboxPane.getSelectedComponent());
             }
         });
+
         stage.setScene(scene);
         stage.show();
     }

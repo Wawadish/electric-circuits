@@ -11,6 +11,7 @@ import javafx.scene.input.ClipboardContent;
 import javafx.scene.input.DataFormat;
 import javafx.scene.input.Dragboard;
 import javafx.scene.input.TransferMode;
+import javafx.scene.layout.Border;
 import javafx.scene.layout.Pane;
 import javafx.util.Callback;
 
@@ -27,10 +28,9 @@ public class SideBarPane extends Pane {
 	public SideBarPane() {
 		// Setting the background color and dimensions of the sidebar
 		setStyle("-fx-background-color: grey;");
-		setPrefSize(Main.WIDTH / 5, Main.HEIGHT);
 
 		ObservableList<ListViewItem> listItems = FXCollections.observableArrayList();
-
+                
 		// Add temporary components to the side list
 		listItems.add(new ListViewItem("Battery", ComponentType.BATTERY));
 		listItems.add(new ListViewItem("LED", ComponentType.LED));
@@ -50,8 +50,7 @@ public class SideBarPane extends Pane {
 		//Adding ObservableItems to the ListView and defining the background color and dimensions of the ListView.
 		listView.setItems(listItems);
 		listView.setStyle("-fx-control-inner-background: grey;");
-		listView.setPrefSize(Main.WIDTH, Main.HEIGHT);
-
+                listView.setPrefSize(Main.WIDTH / 4, Main.HEIGHT);
 		//Adding the ListView to this Pane (the sidebar).
 		getChildren().add(listView);
 	}

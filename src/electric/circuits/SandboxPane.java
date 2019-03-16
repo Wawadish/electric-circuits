@@ -40,7 +40,7 @@ public class SandboxPane extends AnchorPane {
         this.components = new HashSet<>();
         this.simulation = new SimulationContext();
 
-        setStyle("-fx-background-color: red;");
+        setStyle("-fx-background-color: grey;");
         setPrefSize(PREF_WIDTH, PREF_HEIGHT);
 
         addDummyComponents();
