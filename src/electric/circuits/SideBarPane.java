@@ -1,5 +1,6 @@
 package electric.circuits;
 
+import static electric.circuits.Main.lockGUI;
 import electric.circuits.data.ComponentType;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -45,6 +46,8 @@ public class SideBarPane extends Pane {
 			ListViewItem item = listView.getSelectionModel().getSelectedItem();
 
 			Utils.startDrag(listView, item.getComponentType());
+                        
+                        lockGUI();
 		});
 
 		//Adding ObservableItems to the ListView and defining the background color and dimensions of the ListView.

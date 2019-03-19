@@ -1,5 +1,6 @@
 package electric.circuits;
 
+import static electric.circuits.Main.unlockGUI;
 import electric.circuits.SandboxWire.WireDragData;
 import electric.circuits.component.DummyBatteryComponent;
 import electric.circuits.component.DummyComponent;
@@ -59,6 +60,7 @@ public class SandboxPane extends AnchorPane {
         });
 
         this.setOnDragDropped(e -> {
+            unlockGUI();
             if (e.getTransferMode() == TransferMode.COPY) {
                 Image image = (Image) e.getDragboard().getContent(DataFormat.IMAGE);
                 ComponentType type = (ComponentType) e.getDragboard().getContent(DataFormat.PLAIN_TEXT);
