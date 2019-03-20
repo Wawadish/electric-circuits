@@ -32,7 +32,7 @@ public class SandboxPane extends AnchorPane {
 
 	private final SimulationContext simulation;
 	private final Set<SandboxComponent> components;
-	private SandboxComponent selectedComponent;
+	private Object selectedObject;
 
 	private WireDragData wireDragData;
 
@@ -75,11 +75,7 @@ public class SandboxPane extends AnchorPane {
 				return;
 			}
 
-			if (selectedComponent != null) {
-				System.out.println("unselected");
-			}
-			
-			selectedComponent = null;
+			selectedObject = null;
 		});
 	}
 
@@ -116,7 +112,7 @@ public class SandboxPane extends AnchorPane {
 		sc.move(x, y);
 		sc.initialize();
 		components.add(sc);
-		selectedComponent = sc;
+		selectedObject = sc;
 	}
 
 	public void deleteComponent(SandboxComponent comp) {
@@ -124,12 +120,16 @@ public class SandboxPane extends AnchorPane {
 		components.remove(comp);
 	}
 
-	public void setSelectedComponent(SandboxComponent selectedComponent) {
-		this.selectedComponent = selectedComponent;
+	public void setSelectedObject(Object selectedComponent) {
+		this.selectedObject = selectedComponent;
 	}
 
 	public SandboxComponent getSelectedComponent() {
-		return selectedComponent;
+		return selectedObject instanceof SandboxComponent ? (SandboxComponent) selectedObject : null;
+	}
+
+	public SandboxWire getSelectedWire() {
+		return selectedObject instanceof SandboxWire ? (SandboxWire) selectedObject : null;
 	}
 
 	public WireDragData getDraggedWire() {

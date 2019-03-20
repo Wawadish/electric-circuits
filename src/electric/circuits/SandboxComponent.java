@@ -48,8 +48,7 @@ public class SandboxComponent {
         });
 
         imageView.setOnMouseClicked(e -> {
-            pane.setSelectedComponent(this);
-            System.out.println("Selected");
+            pane.setSelectedObject(this);
 			if (!e.isDragDetect())
 				e.consume();
 

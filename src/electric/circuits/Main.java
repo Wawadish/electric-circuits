@@ -60,11 +60,28 @@ public class Main extends Application {
 		scene = new Scene(stackPane, WIDTH, HEIGHT);
 
 		scene.setOnKeyPressed(e -> {
-			SandboxComponent comp = sandboxPane.getSelectedComponent();
-			System.out.println("delete "+comp+": "+(e.getCode()));
-			if (e.getCode() == KeyCode.BACK_SPACE && comp != null) {
-				sandboxPane.deleteComponent(comp);
+			if (e.getCode() == KeyCode.BACK_SPACE) {
+				SandboxComponent comp = sandboxPane.getSelectedComponent();
+				if (comp != null) {
+					sandboxPane.deleteComponent(comp);
+					return;
+				}
+				
+				SandboxWire wire = sandboxPane.getSelectedWire();
+				if (wire != null && wire.component() == null) {
+					wire.removeFromPane();
+					return;
+				}
 			}
+			
+			if (e.getCode() == KeyCode.W) {
+				if (sandboxPane.getDraggedWire() != null)
+					return;
+				
+				SandboxWire wire = new SandboxWire(sandboxPane);
+			}
+			
+			
 		});
 
 		stage.setScene(scene);

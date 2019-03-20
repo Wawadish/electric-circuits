@@ -23,6 +23,7 @@ public class SandboxWire implements Connectable {
 	private final Line line;
 
 	private final ElectricWire wire;
+	private SandboxComponent component;
 
 	public SandboxWire(SandboxPane pane) {
 		this.pane = pane;
@@ -36,8 +37,19 @@ public class SandboxWire implements Connectable {
 		this.wire = new ElectricWire();
 	}
 
+	public void initialize(double x, double y) {
+		initialize(null, true, x, y);
+	}
+
 	public void initialize(SandboxComponent comp, boolean left) {
-		wire.endpoints()[0] = new ElectricConnection(comp.getComponent(), left);
+		initialize(comp, left, 0, 0);
+	}
+
+	public void initialize(SandboxComponent comp, boolean left, double x, double y) {
+		this.component = comp;
+		if (comp != null) {
+			wire.endpoints()[0] = new ElectricConnection(comp.getComponent(), left);
+		}
 
 		// Initialize the line
 		line.startXProperty().bind(junctions[0].centerXProperty());
@@ -57,37 +69,69 @@ public class SandboxWire implements Connectable {
 		}
 
 		// Setup position
-		ImageView imageView = comp.getImageView();
+		if (comp != null) {
+			ImageView imageView = comp.getImageView();
 
-		double centerX = left ? imageView.getX() : imageView.getX() + imageView.getImage().getWidth();
-		double centerY = imageView.getY() + imageView.getImage().getHeight() / 2;
-		forEachJunction(j -> {
-			j.setCenterX(centerX);
-			j.setCenterY(centerY);
-		});
+			double centerX = left ? imageView.getX() : imageView.getX() + imageView.getImage().getWidth();
+			double centerY = imageView.getY() + imageView.getImage().getHeight() / 2;
+			forEachJunction(j -> {
+				j.setCenterX(centerX);
+				j.setCenterY(centerY);
+			});
+		} else {
+			forEachJunction(j -> {
+				j.setCenterX(x);
+				j.setCenterY(y);
+			});
+		}
 
-		junctions[1].setOnDragDetected(e -> pane.startWireDrag(new WireDragData(junctions[1])));
+		setupDrag(junctions[1]);
+		if (comp == null) {
+			setupDrag(junctions[0]);
+		}
 
 		forEachJunction(j -> {
 			j.setOnDragOver(e -> {
-				// Only accept wire drags
-				e.acceptTransferModes(TransferMode.MOVE);
 				WireDragData wdd = pane.getDraggedWire();
+				SandboxWire other = wdd.getWire();
+				if (this.component == other.component) {
+					e.acceptTransferModes();
+					return;
+				}
+
+				e.acceptTransferModes(TransferMode.MOVE);
 				Circle circle = wdd.getCircle();
 				circle.setCenterX(j.getCenterX());
 				circle.setCenterY(j.getCenterY());
 				e.consume();
-
 			});
 
 			j.setOnDragDropped(e -> {
 				WireDragData wdd = pane.getDraggedWire();
 				Circle circle = wdd.getCircle();
+				SandboxWire other = wdd.getWire();
+
+				if (this.component == other.component) {
+					System.out.println("nope: "+this.component+"; "+other.component);
+					return;
+				}
 				circle.setCenterX(j.getCenterX());
 				circle.setCenterY(j.getCenterY());
-				
+
 				Utils.connect(wire, wdd.getWire().wire);
 			});
+		});
+	}
+
+	private void setupDrag(Circle circle) {
+		circle.setOnDragDetected(e -> {
+			circle.setPickOnBounds(false);
+			pane.startWireDrag(new WireDragData(circle));
+		});
+
+		circle.setOnDragDone(e -> {
+			System.out.println("ouf");
+			circle.setPickOnBounds(true);
 		});
 	}
 
@@ -102,7 +146,7 @@ public class SandboxWire implements Connectable {
 		forEachJunction(j -> {
 			pane.getChildren().remove(j);
 		});
-		
+
 		// Disconnect all
 		Utils.disconnectAll(wire);
 	}
@@ -114,6 +158,10 @@ public class SandboxWire implements Connectable {
 	public Connectable[] connections() {
 		return connections;
 
+	}
+
+	public SandboxComponent component() {
+		return component;
 	}
 
 	public class WireDragData {
