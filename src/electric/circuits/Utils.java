@@ -27,6 +27,11 @@ public class Utils {
         wire1.wires().add(wire2);
         wire2.wires().add(wire1);
     }
+	
+	public static void disconnect(ElectricWire wire1, ElectricWire wire2) {
+		wire1.wires().remove(wire2);
+        wire2.wires().remove(wire1);
+	}
 
     public static void connect(ElectricComponent comp, ElectricWire wire1, ElectricWire wire2) {
         comp.setLeftWire(wire1);

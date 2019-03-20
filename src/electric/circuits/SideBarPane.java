@@ -1,6 +1,5 @@
 package electric.circuits;
 
-import static electric.circuits.Main.lockGUI;
 import electric.circuits.data.ComponentType;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -8,11 +7,6 @@ import javafx.scene.control.ListCell;
 import javafx.scene.control.ListView;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
-import javafx.scene.input.ClipboardContent;
-import javafx.scene.input.DataFormat;
-import javafx.scene.input.Dragboard;
-import javafx.scene.input.TransferMode;
-import javafx.scene.layout.Border;
 import javafx.scene.layout.Pane;
 import javafx.util.Callback;
 
@@ -47,7 +41,6 @@ public class SideBarPane extends Pane {
 
 			Utils.startDrag(listView, item.getComponentType());
                         
-                        lockGUI();
 		});
 
 		//Adding ObservableItems to the ListView and defining the background color and dimensions of the ListView.

@@ -1,16 +1,13 @@
 package electric.circuits;
 
+import electric.circuits.data.ElectricConnection;
+import electric.circuits.data.ElectricWire;
 import java.util.function.Consumer;
-import javafx.beans.binding.DoubleBinding;
-import javafx.beans.property.DoubleProperty;
-import javafx.event.EventHandler;
 import javafx.scene.image.ImageView;
-import javafx.scene.input.ClipboardContent;
-import javafx.scene.input.Dragboard;
-import javafx.scene.input.MouseEvent;
 import javafx.scene.input.TransferMode;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
+import javafx.scene.shape.Line;
 
 /**
  *
@@ -18,75 +15,116 @@ import javafx.scene.shape.Circle;
  */
 public class SandboxWire implements Connectable {
 
-    private static final double JUNCTION_RADIUS = 10;
+	private static final double JUNCTION_RADIUS = 10;
 
-    private final SandboxPane pane;
-    private final Circle junctions[];
-    private final Connectable connections[];
+	private final SandboxPane pane;
+	private final Circle junctions[];
+	private final Connectable connections[];
+	private final Line line;
 
-    public SandboxWire(SandboxPane pane) {
-        this.pane = pane;
-        this.junctions = new Circle[]{
-            new Circle(JUNCTION_RADIUS),
-            new Circle(JUNCTION_RADIUS)
-        };
+	private final ElectricWire wire;
 
-        this.connections = new Connectable[2];
-    }
+	public SandboxWire(SandboxPane pane) {
+		this.pane = pane;
+		this.junctions = new Circle[]{
+			new Circle(JUNCTION_RADIUS),
+			new Circle(JUNCTION_RADIUS)
+		};
 
-    public void initialize(SandboxComponent comp, boolean left) {
-        // Initialize circles
-        for (int i = 0; i < junctions.length; ++i) {
-            Circle j = junctions[i];
-            j.setFill(Color.WHITE);
-            j.setStroke(Color.BLACK);
-            pane.getChildren().add(j);
-        }
-        // Setup position
-        ImageView imageView = comp.getImageView();
+		this.connections = new Connectable[2];
+		this.line = new Line();
+		this.wire = new ElectricWire();
+	}
 
-        double centerX = left ? imageView.getX() : imageView.getX() + imageView.getImage().getWidth();
-        double centerY = imageView.getY() + imageView.getImage().getHeight() / 2;
-        forEachJunction(j -> {
-            j.setCenterX(centerX);
-            j.setCenterY(centerY);
-        });
+	public void initialize(SandboxComponent comp, boolean left) {
+		wire.endpoints()[0] = new ElectricConnection(comp.getComponent(), left);
 
-        junctions[0].setOnDragDetected(e -> pane.startWireDrag(new WireDragData(0, this)));
-    }
+		// Initialize the line
+		line.startXProperty().bind(junctions[0].centerXProperty());
+		line.startYProperty().bind(junctions[0].centerYProperty());
+		line.endXProperty().bind(junctions[1].centerXProperty());
+		line.endYProperty().bind(junctions[1].centerYProperty());
+		line.setStroke(Color.BLACK);
+		line.setStrokeWidth(5);
+		pane.getChildren().add(line);
 
-    private void forEachJunction(Consumer<Circle> cons) {
-        for (int i = 0; i < junctions.length; ++i) {
-            cons.accept(junctions[i]);
-        }
-    }
+		// Initialize circles
+		for (int i = 0; i < junctions.length; ++i) {
+			Circle j = junctions[i];
+			j.setFill(Color.WHITE);
+			j.setStroke(Color.BLACK);
+			pane.getChildren().add(j);
+		}
 
-    public void removeFromPane() {
-        forEachJunction(j -> {
-            pane.getChildren().remove(j);
-        });
-    }
+		// Setup position
+		ImageView imageView = comp.getImageView();
 
-    public Circle[] junctions() {
-        return junctions;
-    }
+		double centerX = left ? imageView.getX() : imageView.getX() + imageView.getImage().getWidth();
+		double centerY = imageView.getY() + imageView.getImage().getHeight() / 2;
+		forEachJunction(j -> {
+			j.setCenterX(centerX);
+			j.setCenterY(centerY);
+		});
 
-    public Connectable[] connections() {
-        return connections;
+		junctions[1].setOnDragDetected(e -> pane.startWireDrag(new WireDragData(junctions[1])));
 
-    }
+		forEachJunction(j -> {
+			j.setOnDragOver(e -> {
+				// Only accept wire drags
+				e.acceptTransferModes(TransferMode.MOVE);
+				WireDragData wdd = pane.getDraggedWire();
+				Circle circle = wdd.getCircle();
+				circle.setCenterX(j.getCenterX());
+				circle.setCenterY(j.getCenterY());
+				e.consume();
 
-    public static class WireDragData {
+			});
 
-        public final int index;
-        public final Circle circle;
-        public final SandboxWire wire;
+			j.setOnDragDropped(e -> {
+				WireDragData wdd = pane.getDraggedWire();
+				Circle circle = wdd.getCircle();
+				circle.setCenterX(j.getCenterX());
+				circle.setCenterY(j.getCenterY());
+			});
+		});
+	}
 
-        public WireDragData(int index, SandboxWire wire) {
-            this.index = index;
-            this.wire = wire;
-            this.circle = wire.junctions[index];
-        }
+	private void forEachJunction(Consumer<Circle> cons) {
+		for (int i = 0; i < junctions.length; ++i) {
+			cons.accept(junctions[i]);
+		}
+	}
 
-    }
+	public void removeFromPane() {
+		pane.getChildren().remove(line);
+		forEachJunction(j -> {
+			pane.getChildren().remove(j);
+		});
+	}
+
+	public Circle[] junctions() {
+		return junctions;
+	}
+
+	public Connectable[] connections() {
+		return connections;
+
+	}
+
+	public class WireDragData {
+
+		private final Circle circle;
+
+		public WireDragData(Circle circle) {
+			this.circle = circle;
+		}
+
+		public Circle getCircle() {
+			return circle;
+		}
+
+		public SandboxWire getWire() {
+			return SandboxWire.this;
+		}
+	}
 }

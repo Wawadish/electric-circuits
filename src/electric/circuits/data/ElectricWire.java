@@ -55,5 +55,5 @@ public class ElectricWire {
 	public Set<ElectricWire> wires() {
 		return wires;
 	}
-
+	
 }
