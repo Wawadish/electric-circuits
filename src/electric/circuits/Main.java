@@ -61,6 +61,7 @@ public class Main extends Application {
 
 		scene.setOnKeyPressed(e -> {
 			SandboxComponent comp = sandboxPane.getSelectedComponent();
+			System.out.println("delete "+comp+": "+(e.getCode()));
 			if (e.getCode() == KeyCode.BACK_SPACE && comp != null) {
 				sandboxPane.deleteComponent(comp);
 			}

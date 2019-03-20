@@ -37,6 +37,7 @@ public class SandboxComponent {
         wireLeft.initialize(this, true);
         wireRight.initialize(this, false);
 
+		imageView.setPickOnBounds(true);
         imageView.setOnDragDetected(e -> {
             wireLeft.removeFromPane();
             wireRight.removeFromPane();
@@ -48,8 +49,9 @@ public class SandboxComponent {
 
         imageView.setOnMouseClicked(e -> {
             pane.setSelectedComponent(this);
-            System.out.println("X: " + this.gridX + " Y: " + this.gridY);
-            e.consume();
+            System.out.println("Selected");
+			if (!e.isDragDetect())
+				e.consume();
 
             InfoPane.topTitle.setVisible(true);
             InfoPane.k_title.setVisible(true);

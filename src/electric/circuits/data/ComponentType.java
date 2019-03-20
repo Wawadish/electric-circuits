@@ -15,18 +15,22 @@ public enum ComponentType {
 	/**
 	 * Provides a fixed voltage source.
 	 */
-	BATTERY,
+	BATTERY("file:assets/images/battery.png"),
 	/**
 	 * Produces light of a certain color.
 	 */
-	LED,
+	LED("file:assets/images/lamp_off.png"),
 	/**
 	 * Provides a resistance to the circuit; this reduces the voltage and the
 	 * current.
 	 */
-	RESISTOR;
+	RESISTOR("file:assets/images/placeholder.png");
 
-	private static final Image PLACEHOLDER = new Image("file:assets/images/placeholder.png");
+	private final Image image;
+
+	private ComponentType(String url) {
+		this.image = new Image(url, 100, 100, true, true);
+	}
 
 	public ElectricComponent create(SimulationContext context) {
 		// TODO: implement method
@@ -43,6 +47,6 @@ public enum ComponentType {
 	}
 
 	public Image getImage() {
-		return PLACEHOLDER;
+		return image;
 	}
 }

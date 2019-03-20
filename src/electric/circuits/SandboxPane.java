@@ -40,7 +40,7 @@ public class SandboxPane extends AnchorPane {
 		this.components = new HashSet<>();
 		this.simulation = new SimulationContext();
 
-		setStyle("-fx-background-color: grey;");
+		setStyle("-fx-background-color: green;");
 		setPrefSize(PREF_WIDTH, PREF_HEIGHT);
 
 		addDummyComponents();
@@ -55,7 +55,7 @@ public class SandboxPane extends AnchorPane {
 
 				wireDragData.getCircle().setCenterX(mouseX);
 				wireDragData.getCircle().setCenterY(mouseY);
-				
+
 			}
 		});
 
@@ -71,6 +71,14 @@ public class SandboxPane extends AnchorPane {
 		});
 
 		this.setOnMouseClicked(e -> {
+			if (e.isDragDetect()) {
+				return;
+			}
+
+			if (selectedComponent != null) {
+				System.out.println("unselected");
+			}
+			
 			selectedComponent = null;
 		});
 	}

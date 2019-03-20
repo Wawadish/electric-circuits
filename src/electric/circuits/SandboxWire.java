@@ -15,7 +15,7 @@ import javafx.scene.shape.Line;
  */
 public class SandboxWire implements Connectable {
 
-	private static final double JUNCTION_RADIUS = 10;
+	private static final double JUNCTION_RADIUS = 6;
 
 	private final SandboxPane pane;
 	private final Circle junctions[];
@@ -85,6 +85,8 @@ public class SandboxWire implements Connectable {
 				Circle circle = wdd.getCircle();
 				circle.setCenterX(j.getCenterX());
 				circle.setCenterY(j.getCenterY());
+				
+				Utils.connect(wire, wdd.getWire().wire);
 			});
 		});
 	}
@@ -100,6 +102,9 @@ public class SandboxWire implements Connectable {
 		forEachJunction(j -> {
 			pane.getChildren().remove(j);
 		});
+		
+		// Disconnect all
+		Utils.disconnectAll(wire);
 	}
 
 	public Circle[] junctions() {
