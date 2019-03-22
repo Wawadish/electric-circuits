@@ -104,7 +104,7 @@ public class SandboxPane extends AnchorPane {
 		x = Math.max(0, Math.min(MAX_GRID_X, x));
 		y = Math.max(0, Math.min(MAX_GRID_Y, y));
 
-		addComponent(x, y, new ElectricComponent(simulation, comp));
+		addComponent(x, y, comp.create(simulation));
 	}
 
 	public void addComponent(int x, int y, ElectricComponent ec) {
@@ -132,8 +132,14 @@ public class SandboxPane extends AnchorPane {
 		return selectedObject instanceof SandboxWire ? (SandboxWire) selectedObject : null;
 	}
 
-	public WireDragData getDraggedWire() {
+	public WireDragData getWireDrag() {
 		return wireDragData;
+	}
+	
+	public WireDragData endWireDrag() {
+		WireDragData wdd = wireDragData;
+		wireDragData = null;
+		return wdd;
 	}
 
 	public void startWireDrag(WireDragData wireDragData) {

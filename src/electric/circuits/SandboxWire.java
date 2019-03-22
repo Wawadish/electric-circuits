@@ -86,15 +86,17 @@ public class SandboxWire implements Connectable {
 		}
 
 		setupDrag(junctions[1]);
+
+		// If this is a hanging wire, both ends should be made draggable
 		if (comp == null) {
 			setupDrag(junctions[0]);
 		}
 
 		forEachJunction(j -> {
 			j.setOnDragOver(e -> {
-				WireDragData wdd = pane.getDraggedWire();
+				WireDragData wdd = pane.getWireDrag();
 				SandboxWire other = wdd.getWire();
-				if (this.component == other.component) {
+				if (this.component == other.component && this.wire == other.wire) {
 					e.acceptTransferModes();
 					return;
 				}
@@ -107,26 +109,37 @@ public class SandboxWire implements Connectable {
 			});
 
 			j.setOnDragDropped(e -> {
-				WireDragData wdd = pane.getDraggedWire();
+				WireDragData wdd = pane.endWireDrag();
 				Circle circle = wdd.getCircle();
 				SandboxWire other = wdd.getWire();
 
-				if (this.component == other.component) {
+				if (this.component == other.component && this.wire == other.wire) {
 					return;
 				}
-				
+
 				circle.setCenterX(j.getCenterX());
 				circle.setCenterY(j.getCenterY());
-				
+
+				// Replace the circle and the line at the top of the stack
+				// so that they can be easily dragged away
+				pane.getChildren().removeAll(circle);
+				pane.getChildren().add(circle);
+
 				System.out.println("Connecting two elements");
-				Utils.connect(wire, wdd.getWire().wire);
+				Utils.connect(wire, other.wire);
+			});
+
+			j.setOnMouseClicked(e -> {
+				if (this.component == null) {
+					pane.setSelectedObject(this);
+				}
 			});
 		});
 	}
 
 	private void setupDrag(Circle circle) {
 		circle.setOnDragDetected(e -> {
-			// Need to replace the circle and the line at the bottom of the stack
+			// Replace the circle and the line at the bottom of the stack
 			// so that the drag and drop mechanics work properly.
 			pane.getChildren().removeAll(circle, line);
 			pane.getChildren().add(0, circle);

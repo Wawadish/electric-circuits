@@ -42,7 +42,6 @@ public class SideBarPane extends Pane {
 				return;
 
 			Utils.startDrag(listView, item.getComponentType());
-
 		});
 
 		//Adding ObservableItems to the ListView and defining the background color and dimensions of the ListView.

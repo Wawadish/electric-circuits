@@ -1,6 +1,7 @@
 package electric.circuits;
 
 import javafx.application.Application;
+import javafx.beans.property.SimpleDoubleProperty;
 import javafx.scene.Scene;
 import javafx.scene.input.KeyCode;
 import javafx.scene.layout.ColumnConstraints;
@@ -47,38 +48,45 @@ public class Main extends Application {
 		gridPane.setPickOnBounds(false);
 		gridPane.getChildren().addAll(menuPane, infoPane, sideBarPane);
 		gridPane.getChildren().forEach(item -> {
-
 			item.setOpacity(0);
-			item.setOnMouseEntered(e -> {
-				item.setOpacity(100);
-			});
-			item.setOnMouseExited(e -> {
-				item.setOpacity(0);
-			});
+			item.setOnMouseEntered(e -> item.setOpacity(100));
+			item.setOnMouseExited(e -> item.setOpacity(0));
 
 		});
+		
+		SimpleDoubleProperty xMouse = new SimpleDoubleProperty();
+		SimpleDoubleProperty yMouse = new SimpleDoubleProperty();
+		
 		scene = new Scene(stackPane, WIDTH, HEIGHT);
-
+		scene.setOnMouseMoved(e->{
+			xMouse.set(e.getX());
+			yMouse.set(e.getY());
+		});
+		
 		scene.setOnKeyPressed(e -> {
 			if (e.getCode() == KeyCode.BACK_SPACE) {
 				SandboxComponent comp = sandboxPane.getSelectedComponent();
 				if (comp != null) {
 					sandboxPane.deleteComponent(comp);
+					sandboxPane.setSelectedObject(null);
 					return;
 				}
 				
 				SandboxWire wire = sandboxPane.getSelectedWire();
+				System.out.println("Deleting? "+wire+" "+((wire!=null) ? wire.component() : ""));
 				if (wire != null && wire.component() == null) {
 					wire.removeFromPane();
+					sandboxPane.setSelectedObject(null);
 					return;
 				}
 			}
 			
 			if (e.getCode() == KeyCode.W) {
-				if (sandboxPane.getDraggedWire() != null)
+				if (sandboxPane.endWireDrag() != null)
 					return;
 				
 				SandboxWire wire = new SandboxWire(sandboxPane);
+				wire.initialize(xMouse.get(), yMouse.get());
 			}
 			
 			
