@@ -1,6 +1,5 @@
 package electric.circuits;
 
-import electric.circuits.data.ElectricConnection;
 import electric.circuits.data.ElectricWire;
 import java.util.function.Consumer;
 import javafx.scene.image.ImageView;
@@ -13,18 +12,17 @@ import javafx.scene.shape.Line;
  *
  * @author Tomer Moran
  */
-public class SandboxWire implements Connectable {
+public class SandboxWire {
 
 	private static final double JUNCTION_RADIUS = 6;
 
 	private final SandboxPane pane;
 	private final Circle junctions[];
-	private final Connectable connections[];
 	private final Line line;
 
 	private final ElectricWire wire;
 	private SandboxComponent component;
-
+	
 	public SandboxWire(SandboxPane pane) {
 		this.pane = pane;
 		this.junctions = new Circle[]{
@@ -32,7 +30,6 @@ public class SandboxWire implements Connectable {
 			new Circle(JUNCTION_RADIUS)
 		};
 
-		this.connections = new Connectable[2];
 		this.line = new Line();
 		this.wire = new ElectricWire();
 	}
@@ -47,9 +44,6 @@ public class SandboxWire implements Connectable {
 
 	public void initialize(SandboxComponent comp, boolean left, double x, double y) {
 		this.component = comp;
-		if (comp != null) {
-			wire.endpoints()[0] = new ElectricConnection(comp.getComponent(), left);
-		}
 
 		// Initialize the line
 		line.startXProperty().bind(junctions[0].centerXProperty());
@@ -127,10 +121,12 @@ public class SandboxWire implements Connectable {
 
 				System.out.println("Connecting two elements");
 				Utils.connect(wire, other.wire);
+				pane.runSimulation();
 			});
 
 			j.setOnMousePressed(e -> {
 				pane.setSelectedObject((this.component != null) ? component : this);
+				e.consume();
 			});
 		});
 	}
@@ -143,6 +139,7 @@ public class SandboxWire implements Connectable {
 			pane.getChildren().add(0, circle);
 			pane.getChildren().add(0, line);
 			pane.startWireDrag(new WireDragData(circle));
+			pane.runSimulation();
 		});
 	}
 
@@ -166,13 +163,12 @@ public class SandboxWire implements Connectable {
 		return junctions;
 	}
 
-	public Connectable[] connections() {
-		return connections;
-
-	}
-
 	public SandboxComponent component() {
 		return component;
+	}
+
+	public ElectricWire wire() {
+		return wire;
 	}
 
 	public class WireDragData {

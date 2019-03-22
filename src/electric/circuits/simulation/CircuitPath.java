@@ -2,7 +2,7 @@ package electric.circuits.simulation;
 
 import electric.circuits.data.ElectricComponent;
 import electric.circuits.data.ElectricConnection;
-import electric.circuits.data.WireCrawler;
+import electric.circuits.data.WireMap;
 import electric.circuits.data.WireGroup;
 import java.util.Iterator;
 import java.util.LinkedList;
@@ -65,7 +65,7 @@ public class CircuitPath implements Iterable<ElectricConnection> {
 
 	/**
 	 * Returns whether or not a given {@code WireGroup} is traversed by this
-	 * circuit. Searching this requires the help of an {@code WireCrawler}. Note
+	 * circuit. Searching this requires the help of an {@code WireMap}. Note
 	 * that the latter must be the same instance used to construct the given
 	 * {@code WireGroup}.
 	 *
@@ -73,7 +73,7 @@ public class CircuitPath implements Iterable<ElectricConnection> {
 	 * @param wireCrawler the wire group generator.
 	 * @return
 	 */
-	public boolean contains(WireGroup group, WireCrawler wireCrawler) {
+	public boolean contains(WireGroup group, WireMap wireCrawler) {
 		// Preliminary checks
 		if (group == null || connections.size() < 2) {
 			return false;
@@ -140,7 +140,7 @@ public class CircuitPath implements Iterable<ElectricConnection> {
 		return connections.stream().map(con -> con.component());
 	}
 
-	public Stream<WireGroup> wireGroups(WireCrawler map) {
+	public Stream<WireGroup> wireGroups(WireMap map) {
 		return connections.stream().limit(size() - 1).map(c -> map.expand(c.wireNext()));
 	}
 
@@ -152,7 +152,7 @@ public class CircuitPath implements Iterable<ElectricConnection> {
 	 * @param map the wire group generator instance.
 	 * @return the {@code WireGroup} that emerges from this circuit.
 	 */
-	public WireGroup explore(WireCrawler map) {
+	public WireGroup explore(WireMap map) {
 		ElectricConnection connection = connections.getLast();
 		return map.expand(connection.wireNext());
 	}
