@@ -3,6 +3,7 @@ package electric.circuits;
 import static electric.circuits.InfoPane.resistance_box;
 import static electric.circuits.InfoPane.voltage_box;
 import electric.circuits.component.BatteryComponent;
+import electric.circuits.data.ComponentType;
 import electric.circuits.data.ElectricComponent;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
@@ -64,12 +65,14 @@ public class SandboxComponent {
 			if (!e.isDragDetect())
 				e.consume();
                         
-             if(component instanceof BatteryComponent)
+            if(component instanceof BatteryComponent)
             {
             InfoPane.voltage.setVisible(true);
             InfoPane.voltage_box.setVisible(true);
             }
-
+            
+            else
+            {
             InfoPane.topTitle.setVisible(true);
             InfoPane.k_title.setVisible(true);
             InfoPane.kir_eq.setVisible(true);
@@ -77,6 +80,10 @@ public class SandboxComponent {
             InfoPane.ohm_eq.setVisible(true);
             InfoPane.resistance.setVisible(true);
             InfoPane.resistance_box.setVisible(true);
+            InfoPane.voltage.setVisible(false);
+            InfoPane.voltage_box.setVisible(false);
+            
+            }
            
             
             
@@ -93,14 +100,14 @@ public class SandboxComponent {
                                 voltage_box.setText("Invalid input");
                             }
                             else
-                           
-                            voltage_entered = Double.valueOf(voltage_box.getText());
-                            if(component instanceof BatteryComponent)
                             {
+                            voltage_entered = Double.valueOf(voltage_box.getText());
+                           
                                BatteryComponent b = (BatteryComponent) component;
                                b.setVoltage(voltage_entered);
+                               
+                               System.out.println(b.voltage());
                             }
-                            
                             
                            
                             
