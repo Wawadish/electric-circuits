@@ -27,7 +27,7 @@ public class Utils {
 		if (wire1 == wire2) {
 			throw new AssertionError();
 		}
-		
+
 		wire1.wires().add(wire2);
 		wire2.wires().add(wire1);
 	}

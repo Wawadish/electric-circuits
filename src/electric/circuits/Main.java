@@ -18,7 +18,7 @@ public class Main extends Application {
 
 	public static final int WIDTH = 1280;
 	public static final int HEIGHT = 960;
-	
+
 	private final GridPane gridPane = new GridPane();
 	private final StackPane stackPane = new StackPane();
 
@@ -53,16 +53,16 @@ public class Main extends Application {
 			item.setOnMouseExited(e -> item.setOpacity(0));
 
 		});
-		
+
 		SimpleDoubleProperty xMouse = new SimpleDoubleProperty();
 		SimpleDoubleProperty yMouse = new SimpleDoubleProperty();
-		
+
 		scene = new Scene(stackPane, WIDTH, HEIGHT);
-		scene.setOnMouseMoved(e->{
+		scene.setOnMouseMoved(e -> {
 			xMouse.set(e.getX());
 			yMouse.set(e.getY());
 		});
-		
+
 		scene.setOnKeyPressed(e -> {
 			if (e.getCode() == KeyCode.BACK_SPACE) {
 				SandboxComponent comp = sandboxPane.getSelectedComponent();
@@ -71,25 +71,24 @@ public class Main extends Application {
 					sandboxPane.setSelectedObject(null);
 					return;
 				}
-				
+
 				SandboxWire wire = sandboxPane.getSelectedWire();
-				System.out.println("Deleting? "+wire+" "+((wire!=null) ? wire.component() : ""));
+				System.out.println("Deleting? " + wire + " " + ((wire != null) ? wire.component() : ""));
 				if (wire != null && wire.component() == null) {
 					wire.removeFromPane();
 					sandboxPane.setSelectedObject(null);
 					return;
 				}
 			}
-			
+
 			if (e.getCode() == KeyCode.W) {
 				if (sandboxPane.endWireDrag() != null)
 					return;
-				
+
 				SandboxWire wire = new SandboxWire(sandboxPane);
 				wire.initialize(xMouse.get(), yMouse.get());
 			}
-			
-			
+
 		});
 
 		stage.setScene(scene);

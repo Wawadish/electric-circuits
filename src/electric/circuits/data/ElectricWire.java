@@ -10,8 +10,7 @@ import java.util.Set;
  * number of components together.
  *
  * In order to find all the components and wires connected together by a single
- * graph of wires, one should refer to
- * {@link ExpandedWireMap}.
+ * graph of wires, one should refer to {@link ExpandedWireMap}.
  *
  * @author Tomer Moran
  */
@@ -55,5 +54,5 @@ public class ElectricWire {
 	public Set<ElectricWire> wires() {
 		return wires;
 	}
-	
+
 }

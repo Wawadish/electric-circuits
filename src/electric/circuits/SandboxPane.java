@@ -71,10 +71,6 @@ public class SandboxPane extends AnchorPane {
 		});
 
 		this.setOnMouseClicked(e -> {
-			if (e.isDragDetect()) {
-				return;
-			}
-
 			selectedObject = null;
 		});
 	}
@@ -135,7 +131,7 @@ public class SandboxPane extends AnchorPane {
 	public WireDragData getWireDrag() {
 		return wireDragData;
 	}
-	
+
 	public WireDragData endWireDrag() {
 		WireDragData wdd = wireDragData;
 		wireDragData = null;

@@ -129,10 +129,8 @@ public class SandboxWire implements Connectable {
 				Utils.connect(wire, other.wire);
 			});
 
-			j.setOnMouseClicked(e -> {
-				if (this.component == null) {
-					pane.setSelectedObject(this);
-				}
+			j.setOnMousePressed(e -> {
+				pane.setSelectedObject((this.component != null) ? component : this);
 			});
 		});
 	}
