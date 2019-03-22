@@ -25,7 +25,7 @@ public class SideBarPane extends Pane {
 		setStyle("-fx-background-color: grey;");
 
 		ObservableList<ListViewItem> listItems = FXCollections.observableArrayList();
-                
+
 		// Add temporary components to the side list
 		listItems.add(new ListViewItem("Battery", ComponentType.BATTERY));
 		listItems.add(new ListViewItem("LED", ComponentType.LED));
@@ -38,15 +38,17 @@ public class SideBarPane extends Pane {
 		listView.setOnDragDetected(e -> {
 			// Gets the currently selected item
 			ListViewItem item = listView.getSelectionModel().getSelectedItem();
+			if (item == null)
+				return;
 
 			Utils.startDrag(listView, item.getComponentType());
-                        
+
 		});
 
 		//Adding ObservableItems to the ListView and defining the background color and dimensions of the ListView.
 		listView.setItems(listItems);
 		listView.setStyle("-fx-control-inner-background: grey;");
-                listView.setPrefSize(Main.WIDTH / 4, Main.HEIGHT);
+		listView.setPrefSize(Main.WIDTH / 4, Main.HEIGHT);
 		//Adding the ListView to this Pane (the sidebar).
 		getChildren().add(listView);
 	}

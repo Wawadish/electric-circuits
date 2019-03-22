@@ -112,12 +112,13 @@ public class SandboxWire implements Connectable {
 				SandboxWire other = wdd.getWire();
 
 				if (this.component == other.component) {
-					System.out.println("nope: "+this.component+"; "+other.component);
 					return;
 				}
+				
 				circle.setCenterX(j.getCenterX());
 				circle.setCenterY(j.getCenterY());
-
+				
+				System.out.println("Connecting two elements");
 				Utils.connect(wire, wdd.getWire().wire);
 			});
 		});
@@ -125,13 +126,12 @@ public class SandboxWire implements Connectable {
 
 	private void setupDrag(Circle circle) {
 		circle.setOnDragDetected(e -> {
-			circle.setPickOnBounds(false);
+			// Need to replace the circle and the line at the bottom of the stack
+			// so that the drag and drop mechanics work properly.
+			pane.getChildren().removeAll(circle, line);
+			pane.getChildren().add(0, circle);
+			pane.getChildren().add(0, line);
 			pane.startWireDrag(new WireDragData(circle));
-		});
-
-		circle.setOnDragDone(e -> {
-			System.out.println("ouf");
-			circle.setPickOnBounds(true);
 		});
 	}
 
