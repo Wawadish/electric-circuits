@@ -1,6 +1,11 @@
 package electric.circuits;
 
+import static electric.circuits.InfoPane.resistance_box;
+import static electric.circuits.InfoPane.voltage_box;
+import electric.circuits.component.BatteryComponent;
 import electric.circuits.data.ElectricComponent;
+import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
 import javafx.scene.image.ImageView;
 
 /**
@@ -16,6 +21,12 @@ public class SandboxComponent {
 
     private final SandboxPane pane;
     private final ElectricComponent component;
+    
+    //varaibles will store the voltage and resistance that the user inputs in the text field
+    private double voltage_entered;
+    private double resistance_entered;
+    
+    
 
     private SandboxWire wireLeft, wireRight;
 
@@ -26,6 +37,7 @@ public class SandboxComponent {
 
         this.wireLeft = new SandboxWire(pane);
         this.wireRight = new SandboxWire(pane);
+        
     }
 
     public void initialize() {
@@ -51,6 +63,12 @@ public class SandboxComponent {
             pane.setSelectedObject(this);
 			if (!e.isDragDetect())
 				e.consume();
+                        
+             if(component instanceof BatteryComponent)
+            {
+            InfoPane.voltage.setVisible(true);
+            InfoPane.voltage_box.setVisible(true);
+            }
 
             InfoPane.topTitle.setVisible(true);
             InfoPane.k_title.setVisible(true);
@@ -59,9 +77,80 @@ public class SandboxComponent {
             InfoPane.ohm_eq.setVisible(true);
             InfoPane.resistance.setVisible(true);
             InfoPane.resistance_box.setVisible(true);
-            InfoPane.voltage.setVisible(true);
-            InfoPane.voltage_box.setVisible(true);
+           
+            
+            
+            //this will check if the user inputs a valid number as the value of voltage, if they do not then an error message will display. If they do, their value
+            //will be stored in voltage_entered, and then into the component itself
+            
+            InfoPane.voltage_box.setOnAction(new EventHandler<ActionEvent>(){
+                    public void handle(ActionEvent event)
+                    {
+                        try{
+                            
+                            if(Double.valueOf(voltage_box.getText()) <= 0 )
+                            {
+                                voltage_box.setText("Invalid input");
+                            }
+                            else
+                           
+                            voltage_entered = Double.valueOf(voltage_box.getText());
+                            if(component instanceof BatteryComponent)
+                            {
+                               BatteryComponent b = (BatteryComponent) component;
+                               b.setVoltage(voltage_entered);
+                            }
+                            
+                            
+                           
+                            
+                        }
+                        catch(Exception e)
+                        {
+                            voltage_box.setText("Invalid input");
+                            e.printStackTrace();
+                        }
+                    }
+                });
+            
+            
+            //this will check if the user inputs a valid number as the value of resistance, if they do not then an error message will display. If they do, their value
+            //will be stored in resistance_entered, and then into the component itself
+            
+             resistance_box.setOnAction(new EventHandler<ActionEvent>(){
+                    public void handle(ActionEvent event)
+                    {
+                        try{
+                            if(Double.valueOf(resistance_box.getText()) < 0)
+                            {
+                                resistance_box.setText("Invalid input");
+                            }
+                            else
+                            {
+                            resistance_entered = Double.valueOf(resistance_box.getText());
+                            component.setResistance(resistance_entered);
+                             
+                            
+                            }
+                        }
+                        catch(Exception e)
+                        {
+                            e.printStackTrace();
+                            resistance_box.setText("Invalid input");
+                            
+                        }
+                    }
+                });
+             
+            
+            
+            
         });
+        
+       
+        
+        
+        
     }
 
     public void removeFromPane() {
@@ -96,4 +185,6 @@ public class SandboxComponent {
     public ElectricComponent getComponent() {
         return component;
     }
+    
+    
 }

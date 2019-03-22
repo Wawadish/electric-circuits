@@ -1,5 +1,10 @@
 package electric.circuits;
 
+import electric.circuits.component.BatteryComponent;
+import electric.circuits.data.ElectricComponent;
+import java.util.InputMismatchException;
+import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.Pane;
@@ -11,25 +16,36 @@ import javafx.scene.text.Font;
  */
 public class InfoPane extends Pane {
 
+    //creates labels for the elements in the indo panne
 	public static Label topTitle;
 	public static Label k_title;
 	public static Label o_title;
 	public static Label voltage;
 	public static Label resistance;
+        
+        
+        
+       
+        
 
+        //creates textt fields to input data that will link to the components in the sandbox, i.e voltage, resistance, etc
 	public static TextField kir_eq;
 	public static TextField ohm_eq;
 	public static TextField voltage_box;
 	public static TextField resistance_box;
+        
+        //variables that will hold the values entered in the text fields
+      
 
-	public InfoPane() {
+	public InfoPane() 
+        {
+            //sets colour and size of the pane
 		super();
+                //this.sandbox = new SandboxPane();
 		setStyle("-fx-background-color: #BDC3C7;");
 		setPrefSize(Main.WIDTH - Main.WIDTH / 5, Main.HEIGHT / 4);
 
-		// GridPane grid = new GridPane();
-		// grid.getColumnConstraints().addAll(constr(HPos.LEFT), constr(HPos.CENTER),constr(HPos.RIGHT));
-		// grid.addColumn(0, k_title);
+		//sets all elements' size, and poistion in the pane
 		topTitle = new Label("Equations and Configurations");
 		topTitle.setLayoutX(400);
 		topTitle.setFont(new Font(20));
@@ -77,10 +93,18 @@ public class InfoPane extends Pane {
 		resistance_box.setMaxWidth(100);
                 resistance_box.setVisible(false);
 
+                //adds elements to the pane
 		getChildren().addAll(topTitle, k_title, kir_eq, o_title, ohm_eq, voltage, voltage_box, resistance, resistance_box);
+                
+                
+               
+                
+                
                 
 	}
         
+        //the next 9 methods will return either the labels or text fields contained in the pane. This will be useful when making them visible or hiding
+        //them when clicking on compoments
         public Label getTopTitle()
         {
             return topTitle;
@@ -125,6 +149,13 @@ public class InfoPane extends Pane {
         {
             return resistance_box;
         }
+        
+        
+        
+        
+        
+        
+       
 
 
 }
