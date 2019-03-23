@@ -98,6 +98,7 @@ public class Main extends Application {
 			}
 		});
 
+                stage.setTitle("Electric Circuit Builder");
 		stage.setScene(scene);
 		stage.show();
 	}
