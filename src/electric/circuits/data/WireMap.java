@@ -12,7 +12,7 @@ import java.util.Set;
  *
  * @author Tomer Moran
  */
-public class WireCrawler {
+public class WireMap {
 
 	public static final WireGroup EMPTY_GROUP = new WireGroup(Collections.EMPTY_SET, Collections.EMPTY_SET);
 

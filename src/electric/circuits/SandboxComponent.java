@@ -1,6 +1,7 @@
 package electric.circuits;
 
 import electric.circuits.data.ElectricComponent;
+import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 
 /**
@@ -37,6 +38,7 @@ public class SandboxComponent {
 		pane.getChildren().addAll(imageView);
 		wireLeft.initialize(this, true);
 		wireRight.initialize(this, false);
+		Utils.connect(component, wireLeft.wire(), wireRight.wire());
 
 		imageView.setPickOnBounds(true);
 		imageView.setOnDragDetected(e -> {
@@ -46,6 +48,7 @@ public class SandboxComponent {
 			pane.components().remove(this);
 
 			Utils.startDrag(pane, component.getType());
+			pane.runSimulation();
 		});
 
 		imageView.setOnMouseClicked(e -> {
@@ -54,11 +57,13 @@ public class SandboxComponent {
 				e.consume();
 
 			InfoPane.onSelectComponent(component);
-
 		});
-
 	}
 
+	public void setImage(Image image) {
+		imageView.setImage(image);
+	}
+	
 	public void removeFromPane() {
 		pane.getChildren().remove(imageView);
 		wireLeft.removeFromPane();

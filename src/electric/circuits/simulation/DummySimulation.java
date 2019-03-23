@@ -1,6 +1,6 @@
 package electric.circuits.simulation;
 
-import electric.circuits.data.WireCrawler;
+import electric.circuits.data.WireMap;
 import electric.circuits.Utils;
 import electric.circuits.component.BatteryComponent;
 import electric.circuits.component.DummyBatteryComponent;
@@ -31,7 +31,7 @@ public class DummySimulation {
 
 	public static void main(String[] args) {
 		SimulationContext context = new SimulationContext();
-		WireCrawler wireMap = new WireCrawler();
+		WireMap wireMap = new WireMap();
 
 		ElectricComponent battery = new DummyBatteryComponent(context, "Battery", 10);
 		ElectricComponent led1 = new DummyComponent(context, ComponentType.LED, "LED1");
@@ -139,7 +139,7 @@ public class DummySimulation {
 
 	}
 
-	private static Set<CircuitPath> explorePaths(ElectricComponent start, boolean left, WireCrawler wireMap) {
+	private static Set<CircuitPath> explorePaths(ElectricComponent start, boolean left, WireMap wireMap) {
 
 		// Prepare the search
 		Set<CircuitPath> solutions = new HashSet<>();

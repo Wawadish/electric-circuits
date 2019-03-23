@@ -26,6 +26,9 @@ public enum ComponentType {
 	 */
 	RESISTOR("file:assets/images/placeholder.png");
 
+	public static final Image LED_ON = new Image("file:assets/images/lamp_on.gif", 100, 100, true, true);
+	public static final Image LED_OFF = LED.getImage();
+	
 	private final Image image;
 
 	private ComponentType(String url) {

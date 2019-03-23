@@ -82,13 +82,20 @@ public class Main extends Application {
 			}
 
 			if (e.getCode() == KeyCode.W) {
-				if (sandboxPane.endWireDrag() != null)
+				if (sandboxPane.getWireDrag() != null)
 					return;
 
 				SandboxWire wire = new SandboxWire(sandboxPane);
 				wire.initialize(xMouse.get(), yMouse.get());
 			}
-
+			
+			if (e.getCode() == KeyCode.S) {
+				System.out.println("Running simulation...");
+				if (!sandboxPane.runSimulation()) {
+					System.out.println("Failure!!!!");
+				}
+				
+			}
 		});
 
 		stage.setScene(scene);

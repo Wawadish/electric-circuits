@@ -1,8 +1,9 @@
 package electric.circuits;
 
-import electric.circuits.data.ElectricConnection;
 import electric.circuits.data.ElectricWire;
-import java.util.function.Consumer;
+import java.util.HashSet;
+import java.util.Set;
+import java.util.function.BiConsumer;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.TransferMode;
 import javafx.scene.paint.Color;
@@ -13,17 +14,18 @@ import javafx.scene.shape.Line;
  *
  * @author Tomer Moran
  */
-public class SandboxWire implements Connectable {
+public class SandboxWire {
 
 	private static final double JUNCTION_RADIUS = 6;
 
 	private final SandboxPane pane;
 	private final Circle junctions[];
-	private final Connectable connections[];
 	private final Line line;
 
 	private final ElectricWire wire;
 	private SandboxComponent component;
+
+	private final Set<ElectricWire>[] cachedConnectionsPerJunction;
 
 	public SandboxWire(SandboxPane pane) {
 		this.pane = pane;
@@ -32,9 +34,16 @@ public class SandboxWire implements Connectable {
 			new Circle(JUNCTION_RADIUS)
 		};
 
-		this.connections = new Connectable[2];
 		this.line = new Line();
 		this.wire = new ElectricWire();
+		this.cachedConnectionsPerJunction = new Set[]{
+			new HashSet<>(),
+			new HashSet<>()
+		};
+
+		forEachJunction((j, i) -> {
+			j.setUserData(i);
+		});
 	}
 
 	public void initialize(double x, double y) {
@@ -47,9 +56,6 @@ public class SandboxWire implements Connectable {
 
 	public void initialize(SandboxComponent comp, boolean left, double x, double y) {
 		this.component = comp;
-		if (comp != null) {
-			wire.endpoints()[0] = new ElectricConnection(comp.getComponent(), left);
-		}
 
 		// Initialize the line
 		line.startXProperty().bind(junctions[0].centerXProperty());
@@ -74,25 +80,25 @@ public class SandboxWire implements Connectable {
 
 			double centerX = left ? imageView.getX() : imageView.getX() + imageView.getImage().getWidth();
 			double centerY = imageView.getY() + imageView.getImage().getHeight() / 2;
-			forEachJunction(j -> {
+			forEachJunction((j, i) -> {
 				j.setCenterX(centerX);
 				j.setCenterY(centerY);
 			});
 		} else {
-			forEachJunction(j -> {
+			forEachJunction((j, i) -> {
 				j.setCenterX(x);
 				j.setCenterY(y);
 			});
 		}
 
-		setupDrag(junctions[1]);
+		setupDrag(junctions[1], 1);
 
 		// If this is a hanging wire, both ends should be made draggable
 		if (comp == null) {
-			setupDrag(junctions[0]);
+			setupDrag(junctions[0], 0);
 		}
 
-		forEachJunction(j -> {
+		forEachJunction((j, i) -> {
 			j.setOnDragOver(e -> {
 				WireDragData wdd = pane.getWireDrag();
 				SandboxWire other = wdd.getWire();
@@ -127,34 +133,46 @@ public class SandboxWire implements Connectable {
 
 				System.out.println("Connecting two elements");
 				Utils.connect(wire, other.wire);
+				cachedConnectionsPerJunction[i].add(other.wire);
+				other.cachedConnectionsPerJunction[(int) circle.getUserData()].add(wire);
+				pane.runSimulation();
 			});
 
 			j.setOnMousePressed(e -> {
 				pane.setSelectedObject((this.component != null) ? component : this);
+				e.consume();
 			});
 		});
 	}
 
-	private void setupDrag(Circle circle) {
+	private void setupDrag(Circle circle, int i) {
 		circle.setOnDragDetected(e -> {
+			cachedConnectionsPerJunction[i].forEach(w -> {
+				Utils.disconnect(wire, w);
+				System.out.println("disconnecting " + wire + " from " + w);
+			});
+
+			cachedConnectionsPerJunction[i].clear();
+
 			// Replace the circle and the line at the bottom of the stack
 			// so that the drag and drop mechanics work properly.
 			pane.getChildren().removeAll(circle, line);
 			pane.getChildren().add(0, circle);
 			pane.getChildren().add(0, line);
 			pane.startWireDrag(new WireDragData(circle));
+			pane.runSimulation();
 		});
 	}
 
-	private void forEachJunction(Consumer<Circle> cons) {
+	private void forEachJunction(BiConsumer<Circle, Integer> cons) {
 		for (int i = 0; i < junctions.length; ++i) {
-			cons.accept(junctions[i]);
+			cons.accept(junctions[i], i);
 		}
 	}
 
 	public void removeFromPane() {
 		pane.getChildren().remove(line);
-		forEachJunction(j -> {
+		forEachJunction((j, i) -> {
 			pane.getChildren().remove(j);
 		});
 
@@ -166,13 +184,12 @@ public class SandboxWire implements Connectable {
 		return junctions;
 	}
 
-	public Connectable[] connections() {
-		return connections;
-
-	}
-
 	public SandboxComponent component() {
 		return component;
+	}
+
+	public ElectricWire wire() {
+		return wire;
 	}
 
 	public class WireDragData {

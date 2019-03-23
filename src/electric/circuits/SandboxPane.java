@@ -1,12 +1,11 @@
 package electric.circuits;
 
 import electric.circuits.SandboxWire.WireDragData;
-import electric.circuits.component.DummyBatteryComponent;
-import electric.circuits.component.DummyComponent;
+import electric.circuits.component.BatteryComponent;
 import electric.circuits.data.ComponentType;
 import electric.circuits.data.ElectricComponent;
+import electric.circuits.data.Variable;
 import electric.circuits.simulation.SimulationContext;
-import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
 import javafx.scene.image.Image;
@@ -43,8 +42,6 @@ public class SandboxPane extends AnchorPane {
 		setStyle("-fx-background-color: green;");
 		setPrefSize(PREF_WIDTH, PREF_HEIGHT);
 
-		addDummyComponents();
-
 		this.setOnDragOver(e -> {
 			e.acceptTransferModes(TransferMode.COPY, TransferMode.MOVE);
 
@@ -70,8 +67,9 @@ public class SandboxPane extends AnchorPane {
 			}
 		});
 
-		this.setOnMouseClicked(e -> {
+		this.setOnMousePressed(e -> {
 			selectedObject = null;
+			System.out.println("unselecting");
 		});
 	}
 
@@ -79,28 +77,15 @@ public class SandboxPane extends AnchorPane {
 		return components;
 	}
 
-	private void addDummyComponents() {
-		SandboxComponent battery = new SandboxComponent(this, new DummyBatteryComponent(simulation, "Battery", 10));
-		SandboxComponent led1 = new SandboxComponent(this, new DummyComponent(simulation, ComponentType.LED, "LED1"));
-		SandboxComponent led2 = new SandboxComponent(this, new DummyComponent(simulation, ComponentType.LED, "LED2"));
-		SandboxComponent led3 = new SandboxComponent(this, new DummyComponent(simulation, ComponentType.LED, "LED3"));
-		SandboxComponent res = new SandboxComponent(this, new DummyComponent(simulation, ComponentType.RESISTOR, "RES1"));
-
-		battery.move(5, 5);
-		led1.move(10, 5);
-		led2.move(10, 10);
-		led3.move(10, 15);
-		res.move(15, 15);
-
-		components.addAll(Arrays.asList(battery, led1, led2, led3, res));
-		components.forEach(SandboxComponent::initialize);
-	}
-
 	public void addComponent(int x, int y, ComponentType comp) {
 		x = Math.max(0, Math.min(MAX_GRID_X, x));
 		y = Math.max(0, Math.min(MAX_GRID_Y, y));
 
-		addComponent(x, y, comp.create(simulation));
+		ElectricComponent ec = comp.create(simulation);
+		if (!(ec instanceof BatteryComponent))
+			ec.setResistance(1);
+
+		addComponent(x, y, ec);
 	}
 
 	public void addComponent(int x, int y, ElectricComponent ec) {
@@ -146,4 +131,31 @@ public class SandboxPane extends AnchorPane {
 		db.setContent(cc);
 	}
 
+	public boolean runSimulation() {
+		simulation.clearVariables();
+
+		BatteryComponent battery = (BatteryComponent) components.stream()
+				.map(SandboxComponent::getComponent)
+				.filter(c -> c instanceof BatteryComponent)
+				.findAny().orElse(null);
+
+		if (battery == null)
+			return false;
+
+		simulation.runSimulation(battery);
+		components.stream().forEach(sc -> {
+			ElectricComponent comp = sc.getComponent();
+			Variable current = comp.current();
+			if (comp.getType() == ComponentType.LED)
+				sc.setImage((!current.resolve() || Utils.equals(current.get(), 0)) 
+						? ComponentType.LED_OFF 
+						: ComponentType.LED_ON);
+
+			if (!current.resolve())
+				return;
+
+			System.out.println("Component " + comp + ": " + current.get() + " A");
+		});
+		return true;
+	}
 }

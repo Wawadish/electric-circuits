@@ -80,7 +80,7 @@ public class Variable {
 	 * {@code Variable} is now solved); {@code false} otherwise.
 	 */
 	public boolean resolve() {
-		return false;
+		return isSolved();
 	}
 
 	/**
