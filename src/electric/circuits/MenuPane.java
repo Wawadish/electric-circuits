@@ -5,10 +5,18 @@
  */
 package electric.circuits;
 
+import com.google.gson.JsonArray;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
 import electric.circuits.component.BatteryComponent;
 import electric.circuits.data.ComponentType;
 import electric.circuits.data.ElectricComponent;
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileReader;
 import java.io.FileWriter;
+import java.io.InputStreamReader;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Set;
@@ -18,8 +26,11 @@ import javafx.scene.control.CheckBox;
 import javafx.scene.control.Label;
 import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
+import javafx.stage.FileChooser;
 import org.json.simple.JSONObject;
 import org.json.simple.JSONArray;
+import org.json.simple.parser.*;
+
 
 
 /**
@@ -36,6 +47,10 @@ public class MenuPane extends Pane {
 	private Label real_time_label;
         SandboxPane sandbox;
         
+        Set<BatteryComponent> battery_set;
+        Set<ElectricComponent> resistor_set;
+        Set<ElectricComponent> led_set;
+        
         ComponentType type;
 
 	public MenuPane() {
@@ -48,7 +63,7 @@ public class MenuPane extends Pane {
 		save_button.setLayoutY(20);
 
 		load_button = new Button("Load");
-		load_button.setLayoutX(200);
+		load_button.setLayoutX(900);
 		load_button.setLayoutY(20);
 
 		real_time = new CheckBox();
@@ -85,7 +100,7 @@ public class MenuPane extends Pane {
                         {
                             BatteryComponent b = (BatteryComponent) c.getComponent();
                            
-                            Map map = new LinkedHashMap(3);
+                            Map map = new LinkedHashMap();
 
                             map.put("Positionx" , c.getGridX());
                             map.put("Positiony", c.getGridY());
@@ -99,7 +114,7 @@ public class MenuPane extends Pane {
                         if(type == ComponentType.RESISTOR)
                         {
                             
-                            Map map = new LinkedHashMap(3);
+                            Map map = new LinkedHashMap();
                             
                             map.put("Positionx" , c.getGridX());
                             map.put("Positiony", c.getGridY());
@@ -111,7 +126,7 @@ public class MenuPane extends Pane {
                         if(type == ComponentType.LED)
                         {
                             
-                            Map map = new LinkedHashMap(3);
+                            Map map = new LinkedHashMap();
                             
                             map.put("Positionx" , c.getGridX());
                             map.put("Positiony", c.getGridY());
@@ -150,6 +165,69 @@ public class MenuPane extends Pane {
                 
                 load_button.setOnAction((ActionEvent e) -> {
                 
+                sandbox = new SandboxPane();
+                Set<SandboxComponent> com = sandbox.components();
+                
+                for(SandboxComponent c:com)
+                {
+                    sandbox.deleteComponent(c);
+                }
+                
+                try
+                {
+                    FileChooser chooser = new FileChooser();
+                    chooser.getExtensionFilters().addAll(new FileChooser.ExtensionFilter("JSON","*.json"));
+                    
+                    chooser.setTitle("Open Circuit File");
+                    File file = chooser.showOpenDialog(load_button.getScene().getWindow());
+                    
+                    if(file !=null)
+                    {
+                        System.out.println(readJsonFile(file.toString()));
+                        JsonObject root = new JsonParser().parse(file.getAbsolutePath()).getAsJsonObject();
+                        
+                        JsonArray battery_array = root.getAsJsonArray("Battery");
+                        for(int i =0; i < battery_array.size();i++)
+                        {
+                            JsonObject battery_object = battery_array.get(i).getAsJsonObject();
+                            double positionx = battery_object.get("Positionx").getAsDouble();
+                            double positiony = battery_object.get("Positiony").getAsDouble();
+                            double voltage = battery_object.get("Voltage").getAsDouble();
+                            
+                        }
+                        
+                        
+                        JsonArray resistor_array = root.getAsJsonArray("Resistor");
+                        for(int i =0; i < resistor_array.size();i++)
+                        {
+                            JsonObject resistor_object = battery_array.get(i).getAsJsonObject();
+                            double positionx = resistor_object.get("Positionx").getAsDouble();
+                            double positiony = resistor_object.get("Positiony").getAsDouble();
+                            double voltage = resistor_object.get("Resistor").getAsDouble();
+                        }
+                        
+                        
+                        JsonArray led_array = root.getAsJsonArray("LED");
+                        for(int i =0; i < led_array.size();i++)
+                        {
+                            JsonObject led_object = battery_array.get(i).getAsJsonObject();
+                            double positionx = led_object.get("Positionx").getAsDouble();
+                            double positiony = led_object.get("Positiony").getAsDouble();
+                            double voltage = led_object.get("Resistor").getAsDouble();
+                        }
+                        
+                        
+                        
+                        
+                        
+                    }
+                    
+                }
+                
+                catch(Exception ex)
+                {
+                    ex.printStackTrace();
+                }
                 
                 
                 
@@ -157,6 +235,35 @@ public class MenuPane extends Pane {
                 });
 
 	}
+        
+        
+        //to read the file and compare with the output when parsing
+        private String readJsonFile(String fileName)
+        {
+            try{
+            String jsonString = "";
+            FileInputStream fileInput = new FileInputStream(fileName);
+            BufferedReader in = new BufferedReader(new InputStreamReader(fileInput));
+            String inputLine = "";
+            
+            while((inputLine = in.readLine()) !=null)
+            {
+                jsonString += inputLine;
+              
+            }
+            
+            in.close();
+            fileInput.close();
+            return jsonString;
+            
+            }
+            catch(Exception e)
+            {
+                System.out.println("File not found");
+                return "";
+            }
+            
+        }
         
         
         

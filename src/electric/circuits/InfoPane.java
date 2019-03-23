@@ -130,6 +130,8 @@ public class InfoPane extends Pane {
 		if (component instanceof BatteryComponent) {
 			voltageLabel.setVisible(true);
 			voltageTextField.setVisible(true);
+                        resistanceLabel.setVisible(false);
+                        resistanceTextField.setVisible(false);
 		} else {
 			topTitle.setVisible(true);
 			k_title.setVisible(true);
