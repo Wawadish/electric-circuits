@@ -27,7 +27,7 @@ public class InfoPane extends Pane {
 	public static TextField voltageTextField;
 	public static TextField resistanceTextField;
 
-	//variables that will hold the values entered in the text fields
+	
 	public InfoPane() {
 		//sets colour and size of the pane
 		super();
@@ -142,8 +142,8 @@ public class InfoPane extends Pane {
 			voltageTextField.setVisible(false);
 		}
 		
-		//this will check if the user inputs a valid number as the value of voltageLabel, if they do not then an error message will display. If they do, their value
-		//will be stored in voltage_entered, and then into the component itself
+		//this will check if the user inputs a valid number as the value of voltageTextField, if they do not then an error message will display. If they do, their value
+		//will be stored in voltage, and then into the component itself
 		voltageTextField.setOnAction((ActionEvent e) -> {
 			try {
 				double voltage = Double.valueOf(voltageTextField.getText());
@@ -158,8 +158,8 @@ public class InfoPane extends Pane {
 			}
 		});
 		
-		//this will check if the user inputs a valid number as the value of resistanceLabel, if they do not then an error message will display. If they do, their value
-		//will be stored in resistance_entered, and then into the component itself
+		//this will check if the user inputs a valid number as the value of resistanceTextField, if they do not then an error message will display. If they do, their value
+		//will be stored in resistance, and then into the component itself
 		resistanceTextField.setOnAction((ActionEvent e) -> {
 			try {
 				double resistance = Double.valueOf(resistanceTextField.getText());
