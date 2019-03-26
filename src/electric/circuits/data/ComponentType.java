@@ -15,18 +15,18 @@ public enum ComponentType {
 	/**
 	 * Provides a fixed voltage source.
 	 */
-	BATTERY("file:assets/images/battery.png"),
+	BATTERY("file:assets/battery.png"),
 	/**
 	 * Produces light of a certain color.
 	 */
-	LED("file:assets/images/lamp_off.png"),
+	LED("file:assets/lamp_off.png"),
 	/**
 	 * Provides a resistance to the circuit; this reduces the voltage and the
 	 * current.
 	 */
-	RESISTOR("file:assets/images/placeholder.png");
+	RESISTOR("file:assets/resistor.png");
 
-	public static final Image LED_ON = new Image("file:assets/images/lamp_on.gif", 100, 100, true, true);
+	public static final Image LED_ON = new Image("file:assets/lamp_on.gif", 100, 100, true, true);
 	public static final Image LED_OFF = LED.getImage();
 	
 	private final Image image;

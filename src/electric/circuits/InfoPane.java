@@ -14,14 +14,14 @@ import javafx.scene.text.Font;
  */
 public class InfoPane extends Pane {
 
-	//creates labels for the elements in the indo panne
+	// creates labels for the elements in the indo panne
 	public static Label topTitle;
 	public static Label k_title;
 	public static Label o_title;
 	public static Label voltageLabel;
 	public static Label resistanceLabel;
 
-	//creates textt fields to input data that will link to the components in the sandbox, i.e voltageLabel, resistanceLabel, etc
+	// creates textt fields to input data that will link to the components in the sandbox, i.e voltageLabel, resistanceLabel, etc
 	public static TextField kir_eq;
 	public static TextField ohm_eq;
 	public static TextField voltageTextField;
