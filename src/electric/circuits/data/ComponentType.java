@@ -1,5 +1,6 @@
 package electric.circuits.data;
 
+import electric.circuits.component.BatteryComponent;
 import electric.circuits.component.DummyBatteryComponent;
 import electric.circuits.component.DummyComponent;
 import electric.circuits.simulation.SimulationContext;
@@ -41,9 +42,9 @@ public enum ComponentType {
 			case BATTERY:
 				return new DummyBatteryComponent(context, "BATTERY", 15);
 			case LED:
-				return new DummyComponent(context, ComponentType.LED, "LED");
+				return new ElectricComponent(context, ComponentType.LED);
 			case RESISTOR:
-				return new DummyComponent(context, ComponentType.RESISTOR, "RESISTOR");
+				return new ElectricComponent(context, ComponentType.RESISTOR);
 			default:
 				throw new AssertionError("Unimplemented case " + this);
 		}

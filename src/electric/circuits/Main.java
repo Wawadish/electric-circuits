@@ -49,7 +49,7 @@ public class Main extends Application {
         GridPane.setConstraints(sideBarPane, 0, 1, 1, 39);
         GridPane.setConstraints(infoPane, 1, 40, 3, 5);
 
-        gridPane.getChildren().addAll(sideBarPane, infoPane, menuBar);
+        gridPane.getChildren().addAll(sideBarPane, infoPane, menuPane);
         stackPane.getChildren().addAll(sandboxPane, gridPane);
 
         gridPane.setPickOnBounds(false);
