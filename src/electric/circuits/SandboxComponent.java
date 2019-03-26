@@ -53,17 +53,16 @@ public class SandboxComponent {
 
 		imageView.setOnMouseClicked(e -> {
 			pane.setSelectedObject(this);
-			if (!e.isDragDetect())
+			if (!e.isDragDetect()) {
 				e.consume();
-
-			InfoPane.onSelectComponent(component);
+			}
 		});
 	}
 
 	public void setImage(Image image) {
 		imageView.setImage(image);
 	}
-	
+
 	public void removeFromPane() {
 		pane.getChildren().remove(imageView);
 		wireLeft.removeFromPane();
