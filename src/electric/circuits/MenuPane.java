@@ -8,6 +8,7 @@ package electric.circuits;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
+import com.google.gson.stream.JsonReader;
 import electric.circuits.component.BatteryComponent;
 import electric.circuits.data.ComponentType;
 import electric.circuits.data.ElectricComponent;
@@ -16,6 +17,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileWriter;
 import java.io.InputStreamReader;
+import java.io.StringReader;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Set;
@@ -80,9 +82,7 @@ public class MenuPane extends Pane {
 	private void loadCircuit() {
 		Set<SandboxComponent> com = sandboxPane.components();
 
-		for (SandboxComponent c : com) {
-			sandboxPane.deleteComponent(c);
-		}
+		sandboxPane.clearComponents();
 
 		try {
 			FileChooser chooser = new FileChooser();
@@ -92,35 +92,85 @@ public class MenuPane extends Pane {
 			File file = chooser.showOpenDialog(loadButton.getScene().getWindow());
 
 			if (file != null) {
-				System.out.println(readJsonFile(file.toString()));
-				JsonObject root = new JsonParser().parse(file.getAbsolutePath()).getAsJsonObject();
-
-				JsonArray battery_array = root.getAsJsonArray("Battery");
+				String json = (readJsonFile(file.toString()));
+                                System.out.print(json);
+				JsonObject root = new JsonParser().parse(json).getAsJsonObject();
+                                
+				JsonArray battery_array = root.getAsJsonArray("Batteries");
 				for (int i = 0; i < battery_array.size(); i++) {
-					JsonObject battery_object = battery_array.get(i).getAsJsonObject();
-					double positionx = battery_object.get("Positionx").getAsDouble();
-					double positiony = battery_object.get("Positiony").getAsDouble();
+                                    
+                                    
+                                    
+                                    JsonObject battery_object = battery_array.get(i).getAsJsonObject();
+                                    
+					int positionx = battery_object.get("Positionx").getAsInt();
+                                        
+                                       
+                                        
+                                        
+					int positiony = battery_object.get("Positiony").getAsInt();
+                                        
+                                        
 					double voltage = battery_object.get("Voltage").getAsDouble();
-
+                                        
+                                        type = ComponentType.BATTERY;
+                                        
+                                       SandboxComponent comp = sandboxPane.addComponent(positionx, positiony, type);
+                                       ((BatteryComponent)comp.getComponent()).setVoltage(voltage);
+                                        
+                                        
+                                        
+                                        
+                                        
 				}
+				
 
-				JsonArray resistor_array = root.getAsJsonArray("Resistor");
+				JsonArray resistor_array = root.getAsJsonArray("Resistors");
 				for (int i = 0; i < resistor_array.size(); i++) {
-					JsonObject resistor_object = battery_array.get(i).getAsJsonObject();
-					double positionx = resistor_object.get("Positionx").getAsDouble();
-					double positiony = resistor_object.get("Positiony").getAsDouble();
-					double voltage = resistor_object.get("Resistor").getAsDouble();
+					JsonObject resistor_object = resistor_array.get(i).getAsJsonObject();
+					int positionx = resistor_object.get("Positionx").getAsInt();
+                                       
+                                        
+                                        
+					int positiony = resistor_object.get("Positiony").getAsInt();
+                                        
+                                        
+					double resistance = resistor_object.get("Resistance").getAsDouble();
+                                         type = ComponentType.RESISTOR;
+                                        
+                                         SandboxComponent comp = sandboxPane.addComponent(positionx, positiony, type);
+                                         comp.getComponent().setResistance(resistance);
+                                         
+                                        
+                                        
+                                        
 				}
 
-				JsonArray led_array = root.getAsJsonArray("LED");
+				JsonArray led_array = root.getAsJsonArray("LEDs");
 				for (int i = 0; i < led_array.size(); i++) {
-					JsonObject led_object = battery_array.get(i).getAsJsonObject();
-					double positionx = led_object.get("Positionx").getAsDouble();
-					double positiony = led_object.get("Positiony").getAsDouble();
-					double voltage = led_object.get("Resistor").getAsDouble();
+					JsonObject led_object = led_array.get(i).getAsJsonObject();
+					int positionx = led_object.get("Positionx").getAsInt();
+                                        
+                                        
+					int positiony = led_object.get("Positiony").getAsInt();
+                                        
+                                        
+					double resistance = led_object.get("Resistance").getAsDouble();
+                                        
+                                        type = ComponentType.LED;
+                                        
+                                        SandboxComponent comp = sandboxPane.addComponent(positionx, positiony, type);
+                                       
+                                        comp.getComponent().setResistance(resistance);
+                                        
+                                        
+                                        
 				}
+                }
+                                
+        
 
-			}
+			
 
 		} catch (Exception ex) {
 			ex.printStackTrace();
@@ -169,7 +219,7 @@ public class MenuPane extends Pane {
 			obj.put("Resistors", resistor_array);
 			obj.put("LEDs", led_array);
 
-			FileWriter writer = new FileWriter(".\\sample.json");
+			FileWriter writer = new FileWriter("C:\\Users\\cstuser\\Desktop\\sample1.json");
 			writer.write(obj.toJSONString());
 			writer.close();
 		} catch (Exception ex) {
