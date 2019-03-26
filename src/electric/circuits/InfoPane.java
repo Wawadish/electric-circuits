@@ -33,7 +33,6 @@ public class InfoPane extends Pane {
 		super();
 		//this.sandbox = new SandboxPane();
 		setStyle("-fx-background-color: #BDC3C7;");
-		setPrefSize(Main.WIDTH - Main.WIDTH / 5, Main.HEIGHT / 4);
 
 		//sets all elements' size, and poistion in the pane
 		topTitle = new Label("Equations and Configurations");
