@@ -8,6 +8,7 @@ import electric.circuits.data.Variable;
 import electric.circuits.simulation.SimulationContext;
 import java.util.HashSet;
 import java.util.Set;
+import java.util.function.Consumer;
 import javafx.scene.image.Image;
 import javafx.scene.input.ClipboardContent;
 import javafx.scene.input.DataFormat;
@@ -99,6 +100,11 @@ public class SandboxPane extends AnchorPane {
 	public void deleteComponent(SandboxComponent comp) {
 		comp.removeFromPane();
 		components.remove(comp);
+	}
+	
+	public void clearComponents() {
+		components.forEach(SandboxComponent::removeFromPane);
+		components.clear();
 	}
 
 	public void setSelectedObject(Object selectedComponent) {
