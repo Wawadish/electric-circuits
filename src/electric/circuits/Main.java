@@ -22,10 +22,10 @@ public class Main extends Application {
 	private final GridPane gridPane = new GridPane();
 	private final StackPane stackPane = new StackPane();
 
-	private final MenuPane menuPane = new MenuPane();
 	private final InfoPane infoPane = new InfoPane();
 	private final SandboxPane sandboxPane = new SandboxPane();
 	private final SideBarPane sideBarPane = new SideBarPane();
+	private final MenuPane menuPane = new MenuPane(sandboxPane);
 	private Scene scene;
 
 	public static void main(String args[]) {
@@ -82,23 +82,24 @@ public class Main extends Application {
 			}
 
 			if (e.getCode() == KeyCode.W) {
-				if (sandboxPane.getWireDrag() != null)
+				if (sandboxPane.getWireDrag() != null) {
 					return;
+				}
 
 				SandboxWire wire = new SandboxWire(sandboxPane);
 				wire.initialize(xMouse.get(), yMouse.get());
 			}
-			
+
 			if (e.getCode() == KeyCode.S) {
 				System.out.println("Running simulation...");
 				if (!sandboxPane.runSimulation()) {
 					System.out.println("Failure!!!!");
 				}
-				
+
 			}
 		});
 
-                stage.setTitle("Electric Circuit Builder");
+		stage.setTitle("Electric Circuit Builder");
 		stage.setScene(scene);
 		stage.show();
 	}
