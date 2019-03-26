@@ -84,7 +84,7 @@ public class SandboxPane extends AnchorPane {
 		return components;
 	}
 
-	public void addComponent(int x, int y, ComponentType comp) {
+	public SandboxComponent addComponent(int x, int y, ComponentType comp) {
 		x = Math.max(0, Math.min(MAX_GRID_X, x));
 		y = Math.max(0, Math.min(MAX_GRID_Y, y));
 
@@ -93,15 +93,16 @@ public class SandboxPane extends AnchorPane {
 			ec.setResistance(1);
 		}
 
-		addComponent(x, y, ec);
+		return addComponent(x, y, ec);
 	}
 
-	public void addComponent(int x, int y, ElectricComponent ec) {
+	public SandboxComponent addComponent(int x, int y, ElectricComponent ec) {
 		SandboxComponent sc = new SandboxComponent(this, ec);
 		sc.move(x, y);
 		sc.initialize();
 		components.add(sc);
 		selectedObject = sc;
+		return sc;
 	}
 
 	public void deleteComponent(SandboxComponent comp) {

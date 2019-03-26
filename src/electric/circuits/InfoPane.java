@@ -96,13 +96,26 @@ public class InfoPane extends GridPane {
 		add(voltageReadingLabel, 0, 1);
 		add(currentReadingLabel, 0, 2);
 
+		boolean resolved = component.current().resolve();
+		if (resolved) {
+			currentReadingLabel.setText(String.format("Ampmeter Reading: %.1f A", component.current().get()));
+		}
+
 		HBox box;
 		if (component instanceof BatteryComponent) {
-			voltageTextField.setText("" + ((BatteryComponent) component).voltage());
+			double voltage = ((BatteryComponent) component).voltage();
+			voltageTextField.setText("" + voltage);
+			voltageReadingLabel.setText(String.format("Voltmeter Reading: %.1f V", voltage));
 			box = new HBox(voltagePromptLabel, voltageTextField);
+
 		} else {
 			resistanceTextField.setText("" + component.resistance());
 			box = new HBox(resistancePromptLabel, resistanceTextField);
+
+			if (resolved) {
+				voltageReadingLabel.setText(String.format("Voltmeter Reading: %.1f V", component.resistance() * component.current().get()));
+			}
+
 		}
 
 		box.setPadding(new Insets(20, 0, 0, 40));
@@ -133,6 +146,7 @@ public class InfoPane extends GridPane {
 				throw new NumberFormatException();
 			}
 
+			voltageReadingLabel.setText(String.format("Voltmeter Reading: %.1f V", voltage));
 			((BatteryComponent) selectedComponent).setVoltage(voltage);
 			System.out.println("Set voltage: " + voltage);
 			setSuccess(voltageTextField);
