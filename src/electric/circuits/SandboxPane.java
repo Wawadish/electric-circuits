@@ -30,13 +30,15 @@ public class SandboxPane extends AnchorPane {
 	public static final int MAX_GRID_X = (int) (PREF_WIDTH / GRID_SIZE);
 	public static final int MAX_GRID_Y = (int) (PREF_HEIGHT / GRID_SIZE);
 
+	private final InfoPane infoPane;
 	private final SimulationContext simulation;
 	private final Set<SandboxComponent> components;
 	private Object selectedObject;
 
 	private WireDragData wireDragData;
 
-	public SandboxPane() {
+	public SandboxPane(InfoPane infoPane) {
+		this.infoPane = infoPane;
 		this.components = new HashSet<>();
 		this.simulation = new SimulationContext();
 
@@ -74,6 +76,10 @@ public class SandboxPane extends AnchorPane {
 		});
 	}
 
+	public InfoPane infoPane() {
+		return infoPane;
+	}
+
 	public Set<SandboxComponent> components() {
 		return components;
 	}
@@ -83,8 +89,9 @@ public class SandboxPane extends AnchorPane {
 		y = Math.max(0, Math.min(MAX_GRID_Y, y));
 
 		ElectricComponent ec = comp.create(simulation);
-		if (!(ec instanceof BatteryComponent))
+		if (!(ec instanceof BatteryComponent)) {
 			ec.setResistance(1);
+		}
 
 		addComponent(x, y, ec);
 	}
@@ -100,8 +107,10 @@ public class SandboxPane extends AnchorPane {
 	public void deleteComponent(SandboxComponent comp) {
 		comp.removeFromPane();
 		components.remove(comp);
+		
+		runSimulation();
 	}
-	
+
 	public void clearComponents() {
 		components.forEach(SandboxComponent::removeFromPane);
 		components.clear();
@@ -109,6 +118,9 @@ public class SandboxPane extends AnchorPane {
 
 	public void setSelectedObject(Object selectedComponent) {
 		this.selectedObject = selectedComponent;
+		infoPane.onSelectComponent(selectedObject instanceof SandboxComponent
+				? ((SandboxComponent) selectedObject).getComponent()
+				: null);
 	}
 
 	public SandboxComponent getSelectedComponent() {
@@ -145,20 +157,23 @@ public class SandboxPane extends AnchorPane {
 				.filter(c -> c instanceof BatteryComponent)
 				.findAny().orElse(null);
 
-		if (battery == null)
+		if (battery == null) {
 			return false;
+		}
 
 		simulation.runSimulation(battery);
 		components.stream().forEach(sc -> {
 			ElectricComponent comp = sc.getComponent();
 			Variable current = comp.current();
-			if (comp.getType() == ComponentType.LED)
-				sc.setImage((!current.resolve() || Utils.equals(current.get(), 0)) 
-						? ComponentType.LED_OFF 
+			if (comp.getType() == ComponentType.LED) {
+				sc.setImage((!current.resolve() || Utils.equals(current.get(), 0))
+						? ComponentType.LED_OFF
 						: ComponentType.LED_ON);
+			}
 
-			if (!current.resolve())
+			if (!current.resolve()) {
 				return;
+			}
 
 			System.out.println("Component " + comp + ": " + current.get() + " A");
 		});

@@ -2,178 +2,152 @@ package electric.circuits;
 
 import electric.circuits.component.BatteryComponent;
 import electric.circuits.data.ElectricComponent;
-import javafx.event.ActionEvent;
+import javafx.geometry.HPos;
+import javafx.geometry.Insets;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
-import javafx.scene.layout.Pane;
+import javafx.scene.layout.ColumnConstraints;
+import javafx.scene.layout.GridPane;
+import javafx.scene.layout.HBox;
+import javafx.scene.layout.Priority;
 import javafx.scene.text.Font;
 
 /**
  *
  * @author Wawa
  */
-public class InfoPane extends Pane {
+public class InfoPane extends GridPane {
 
 	// creates labels for the elements in the indo panne
-	public static Label topTitle;
-	public static Label k_title;
-	public static Label o_title;
-	public static Label voltageLabel;
-	public static Label resistanceLabel;
+	private final Label titleLabel;
+	private final Label voltageReadingLabel;
+	private final Label currentReadingLabel;
+	private final Label voltagePromptLabel;
+	private final Label resistancePromptLabel;
+	private final Label noElementLabel;
 
 	// creates textt fields to input data that will link to the components in the sandbox, i.e voltageLabel, resistanceLabel, etc
-	public static TextField kir_eq;
-	public static TextField ohm_eq;
-	public static TextField voltageTextField;
-	public static TextField resistanceTextField;
+	private final TextField voltageTextField;
+	private final TextField resistanceTextField;
+	private ElectricComponent selectedComponent;
 
-	
 	public InfoPane() {
-		//sets colour and size of the pane
-		super();
-		//this.sandbox = new SandboxPane();
-		setStyle("-fx-background-color: #BDC3C7;");
+		setStyle("-fx-background-color: #dedfe0;");
+		setPrefSize(Main.WIDTH - Main.WIDTH / 5, Main.HEIGHT / 4);
 
-		//sets all elements' size, and poistion in the pane
-		topTitle = new Label("Equations and Configurations");
-		topTitle.setLayoutX(400);
-		topTitle.setFont(new Font(20));
-		topTitle.setVisible(false);
+		Font textFont = new Font("System", 17);
+		Font promptFont = new Font("System", 13);
 
-		k_title = new Label("Kirchhoff's Equation: ");
-		k_title.setLayoutX(50);
-		k_title.setLayoutY(50);
-		k_title.setVisible(false);
+		// Sets all elements' size, and poistion in the pane
+		titleLabel = new Label("Equations and Configurations");
+		titleLabel.setFont(new Font("System Bold", 30));
 
-		kir_eq = new TextField();
-		kir_eq.setLayoutY(40);
-		kir_eq.setLayoutX(200);
-		kir_eq.setVisible(false);
+		noElementLabel = new Label("No element selected!");
+		noElementLabel.setPadding(new Insets(20, 0, 0, 0));
+		noElementLabel.setFont(textFont);
 
-		o_title = new Label("Ohm's Law: ");
-		o_title.setLayoutY(100);
-		o_title.setLayoutX(50);
-		o_title.setVisible(false);
+		voltageReadingLabel = new Label("Voltmeter Reading: 0.0V");
+		voltageReadingLabel.setFont(textFont);
+		currentReadingLabel = new Label("Ampmeter Reading: 0.0A");
+		currentReadingLabel.setFont(textFont);
 
-		ohm_eq = new TextField();
-		ohm_eq.setLayoutX(200);
-		ohm_eq.setLayoutY(95);
-		ohm_eq.setVisible(false);
+		voltageReadingLabel.setPadding(new Insets(20, 40, 0, 0));
+		currentReadingLabel.setPadding(new Insets(20, 40, 0, 0));
 
-		voltageLabel = new Label("Enter Voltage: ");
-		voltageLabel.setLayoutY(50);
-		voltageLabel.setLayoutX(700);
-		voltageLabel.setVisible(false);
-
+		voltagePromptLabel = new Label("Enter Voltage: ");
+		voltagePromptLabel.setFont(textFont);
 		voltageTextField = new TextField();
-		voltageTextField.setMaxWidth(100);
-		voltageTextField.setLayoutX(850);
-		voltageTextField.setLayoutY(45);
-		voltageTextField.setVisible(false);
+		voltageTextField.setMaxWidth(200);
+		voltageTextField.setFont(promptFont);
 
-		resistanceLabel = new Label("Enter resistance: ");
-		resistanceLabel.setLayoutX(700);
-		resistanceLabel.setLayoutY(100);
-		resistanceLabel.setVisible(false);
-
+		resistancePromptLabel = new Label("Enter resistance: ");
+		resistancePromptLabel.setFont(textFont);
 		resistanceTextField = new TextField();
-		resistanceTextField.setLayoutX(850);
-		resistanceTextField.setLayoutY(90);
-		resistanceTextField.setMaxWidth(100);
-		resistanceTextField.setVisible(false);
+		resistanceTextField.setMaxWidth(200);
+		resistanceTextField.setFont(promptFont);
 
-		//adds elements to the pane
-		getChildren().addAll(topTitle, k_title, kir_eq, o_title, ohm_eq, voltageLabel, voltageTextField, resistanceLabel, resistanceTextField);
+		// Updates the voltage of the battery if a valid, positive number was entered.
+		voltageTextField.setOnAction(e -> updateBatteryVoltage());
 
+		// Updates the resistance of the component if a valid, positive number was entered.
+		resistanceTextField.setOnAction(e -> updateResistance());
+
+		// Add elements to the pane
+		ColumnConstraints constr = new ColumnConstraints();
+		constr.setFillWidth(true);
+		constr.setHalignment(HPos.CENTER);
+		constr.setHgrow(Priority.ALWAYS);
+		getColumnConstraints().setAll(constr, constr);
+
+		onSelectComponent(null);
 	}
 
-	//the next 9 methods will return either the labels or text fields contained in the pane. This will be useful when making them visible or hiding
-	//them when clicking on compoments
-	public Label getTopTitle() {
-		return topTitle;
-	}
+	public void onSelectComponent(ElectricComponent component) {
+		this.selectedComponent = component;
 
-	public Label getKTitle() {
-		return k_title;
-	}
+		this.getChildren().clear();
+		add(titleLabel, 0, 0, 2, 1);
 
-	public Label getOTitle() {
-		return o_title;
-	}
-
-	public Label getVTitle() {
-		return voltageLabel;
-	}
-
-	public Label getRLabel() {
-		return resistanceLabel;
-	}
-
-	public TextField getKirEq() {
-		return kir_eq;
-	}
-
-	public TextField getOhmEq() {
-		return ohm_eq;
-	}
-
-	public TextField getVoltBox() {
-		return voltageTextField;
-	}
-
-	public TextField getResBox() {
-		return resistanceTextField;
-	}
-
-	public static void onSelectComponent(ElectricComponent component) {
-		if (component instanceof BatteryComponent) {
-			voltageLabel.setVisible(true);
-			voltageTextField.setVisible(true);
-                        resistanceLabel.setVisible(false);
-                        resistanceTextField.setVisible(false);
-		} else {
-			topTitle.setVisible(true);
-			k_title.setVisible(true);
-			kir_eq.setVisible(true);
-			o_title.setVisible(true);
-			ohm_eq.setVisible(true);
-			resistanceLabel.setVisible(true);
-			resistanceTextField.setVisible(true);
-			voltageLabel.setVisible(false);
-			voltageTextField.setVisible(false);
+		if (component == null) {
+			add(noElementLabel, 0, 1, 2, 1);
+			return;
 		}
-		
-		//this will check if the user inputs a valid number as the value of voltageTextField, if they do not then an error message will display. If they do, their value
-		//will be stored in voltage, and then into the component itself
-		voltageTextField.setOnAction((ActionEvent e) -> {
-			try {
-				double voltage = Double.valueOf(voltageTextField.getText());
-				if (voltage <= 0) {
-					throw new NumberFormatException();
-				}
 
-				((BatteryComponent) component).setVoltage(voltage);
-				System.out.println("Set voltage: " + voltage);
-			} catch (NumberFormatException ex) {
-				voltageTextField.setText("Invalid input");
-			}
-		});
-		
-		//this will check if the user inputs a valid number as the value of resistanceTextField, if they do not then an error message will display. If they do, their value
-		//will be stored in resistance, and then into the component itself
-		resistanceTextField.setOnAction((ActionEvent e) -> {
-			try {
-				double resistance = Double.valueOf(resistanceTextField.getText());
-				if (resistance < 0) {
-					throw new NumberFormatException();
-				}
-				
-				component.setResistance(resistance);
-				System.out.println("Set resistance: " + resistance);
-			} catch (NumberFormatException ex) {
-				resistanceTextField.setText("Invalid input");
-			}
-		});
+		add(voltageReadingLabel, 0, 1);
+		add(currentReadingLabel, 0, 2);
+
+		HBox box;
+		if (component instanceof BatteryComponent) {
+			voltageTextField.setText("" + ((BatteryComponent) component).voltage());
+			box = new HBox(voltagePromptLabel, voltageTextField);
+		} else {
+			resistanceTextField.setText("" + component.resistance());
+			box = new HBox(resistancePromptLabel, resistanceTextField);
+		}
+
+		box.setPadding(new Insets(20, 0, 0, 40));
+
+		add(box, 1, 1);
 	}
 
+	private void updateResistance() {
+		try {
+			double resistance = Double.valueOf(resistanceTextField.getText());
+			if (resistance < 0) {
+				throw new NumberFormatException();
+			}
+
+			selectedComponent.setResistance(resistance);
+			System.out.println("Set resistance: " + resistance);
+			setSuccess(resistanceTextField);
+		} catch (NumberFormatException ex) {
+			resistanceTextField.setText("Invalid input");
+			setError(resistanceTextField);
+		}
+	}
+
+	private void updateBatteryVoltage() {
+		try {
+			double voltage = Double.valueOf(voltageTextField.getText());
+			if (voltage <= 0) {
+				throw new NumberFormatException();
+			}
+
+			((BatteryComponent) selectedComponent).setVoltage(voltage);
+			System.out.println("Set voltage: " + voltage);
+			setSuccess(voltageTextField);
+		} catch (NumberFormatException ex) {
+			voltageTextField.setText("");
+			voltageTextField.setPromptText("Enter a positive number");
+			setError(voltageTextField);
+		}
+	}
+
+	private void setSuccess(TextField field) {
+		field.setStyle("-fx-text-box-border: green; -fx-focus-color: green;");
+	}
+
+	private void setError(TextField field) {
+		field.setStyle("-fx-text-box-border: red; -fx-focus-color: red;");
+	}
 }

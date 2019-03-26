@@ -25,7 +25,7 @@ public class Main extends Application {
     private final StackPane stackPane = new StackPane();
 
     private final InfoPane infoPane = new InfoPane();
-    private final SandboxPane sandboxPane = new SandboxPane();
+    private final SandboxPane sandboxPane = new SandboxPane(infoPane);
     private final SideBarPane sideBarPane = new SideBarPane();
     private final MenuPane menuPane = new MenuPane(sandboxPane);
 
