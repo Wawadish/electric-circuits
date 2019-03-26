@@ -141,7 +141,7 @@ public class CircuitPath implements Iterable<ElectricConnection> {
 	}
 
 	public Stream<WireGroup> wireGroups(WireMap map) {
-		return connections.stream().limit(size() - 1).map(c -> map.expand(c.wireNext()));
+		return connections.stream().limit(size()).map(c -> map.expand(c.wireNext()));
 	}
 
 	/**

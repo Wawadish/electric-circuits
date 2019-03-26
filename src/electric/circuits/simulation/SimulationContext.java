@@ -58,6 +58,10 @@ public class SimulationContext {
 
 		System.out.println("Found " + paths.size() + " paths");
 
+		paths.stream().flatMap(c -> c.wireGroups(wireMap)).forEach(wg -> {
+			System.out.println("Wire group: " + wg);
+		});
+
 		// 2. Reduce the unknowns
 		paths.stream().flatMap(c -> c.wireGroups(wireMap))
 				.filter(WireGroup::hasTwoConnections)
@@ -69,9 +73,11 @@ public class SimulationContext {
 
 					// Bind the two components together
 					boolean bound = BoundVariable.bind(conn1.component(), conn2.component());
-					System.out.println("binding " + conn1.component() + " and " + conn2.component()+": "+bound);
+					System.out.println("binding " + conn1.component() + " and " + conn2.component() + ": " + bound);
 				});
 
+		
+		
 		// 3. Prepare the matrix equations
 		Map<Variable, Integer> inverseIndex = new IdentityHashMap<>();
 		List<Variable> index = paths.stream().flatMap(CircuitPath::components).map(ElectricComponent::current).filter(v -> !(v instanceof BoundVariable)).distinct().collect(Collectors.toList());
@@ -100,15 +106,18 @@ public class SimulationContext {
 
 			int r2 = row++;
 			WireGroup wg = path.explore(wireMap);
+			System.out.println("Expanding "+wg);
 			wg.connections().stream().map(ElectricConnection::component).forEach(comp -> {
 				Variable parent = comp.current().parent();
 				int col = inverseIndex.get(parent);
 				int x = (comp instanceof BatteryComponent) ? -1 : 1;
 				matrix.set(r2, col, x + matrix.get(r2, col));
+				System.out.println("Adding "+x+" for "+comp.getType()+": "+(matrix.get(r2, col))+" at "+r2+", "+col);
 			});
 
 			constants.set(r2, 0, 0);
 		}
+		
 		System.out.println(matrix);
 		System.out.println(constants);
 

@@ -1,6 +1,5 @@
 package electric.circuits.data;
 
-import electric.circuits.SandboxPane;
 import electric.circuits.simulation.SimulationContext;
 
 /**

@@ -58,6 +58,6 @@ public class WireGroup {
 
 	@Override
 	public String toString() {
-		return wires.toString();
+		return connections.toString();
 	}
 }
