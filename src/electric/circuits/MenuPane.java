@@ -82,7 +82,7 @@ public class MenuPane extends Pane {
 	private void loadCircuit() {
 		Set<SandboxComponent> com = sandboxPane.components();
 
-		sandboxPane.clearComponents();
+		
 
 		try {
 			FileChooser chooser = new FileChooser();
@@ -92,6 +92,9 @@ public class MenuPane extends Pane {
 			File file = chooser.showOpenDialog(loadButton.getScene().getWindow());
 
 			if (file != null) {
+                            
+                                sandboxPane.clearComponents();
+                                
 				String json = (readJsonFile(file.toString()));
                                 System.out.print(json);
 				JsonObject root = new JsonParser().parse(json).getAsJsonObject();
