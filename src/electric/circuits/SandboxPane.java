@@ -22,8 +22,8 @@ import javafx.scene.layout.AnchorPane;
  */
 public class SandboxPane extends AnchorPane {
 
-	private static final double PREF_WIDTH = Main.WIDTH - (Main.WIDTH / 5);
-	private static final double PREF_HEIGHT = Main.HEIGHT - (Main.HEIGHT / 10) - (Main.HEIGHT / 4);
+	private static final double PREF_WIDTH = Main.WIDTH;
+	private static final double PREF_HEIGHT = Main.HEIGHT;
 
 	// TODO: fix max grid size
 	public static final double GRID_SIZE = 30;

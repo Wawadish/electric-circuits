@@ -5,7 +5,10 @@ import javafx.beans.property.SimpleDoubleProperty;
 import javafx.scene.Scene;
 import javafx.scene.control.Menu;
 import javafx.scene.control.MenuBar;
+import javafx.scene.control.MenuItem;
 import javafx.scene.input.KeyCode;
+import javafx.scene.input.KeyCodeCombination;
+import javafx.scene.input.KeyCombination;
 import javafx.scene.layout.ColumnConstraints;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.RowConstraints;
@@ -27,7 +30,6 @@ public class Main extends Application {
     private final InfoPane infoPane = new InfoPane();
     private final SandboxPane sandboxPane = new SandboxPane(infoPane);
     private final SideBarPane sideBarPane = new SideBarPane();
-    private final MenuPane menuPane = new MenuPane(sandboxPane);
 
     private Scene scene;
 
@@ -39,8 +41,19 @@ public class Main extends Application {
     public void start(Stage stage) throws Exception {
         MenuBar menuBar = new MenuBar();
         menuBar.setPrefSize(WIDTH / 4, HEIGHT / 40);
-        Menu menu1 = new Menu("rekt lol");
-        menuBar.getMenus().add(menu1);
+        Menu menu1 = new Menu("File");
+        MenuItem saveItem = new MenuItem("Save");
+        MenuItem loadItem = new MenuItem("Load");
+        menu1.getItems().addAll(saveItem, loadItem);
+        saveItem.setOnAction(e -> {
+            MenuUtils.saveCircuit(sandboxPane);
+        });
+        loadItem.setOnAction(e -> {
+            MenuUtils.loadCircuit(sandboxPane, scene);
+        });
+        saveItem.setAccelerator(new KeyCodeCombination(KeyCode.S, KeyCombination.CONTROL_DOWN));
+        loadItem.setAccelerator(new KeyCodeCombination(KeyCode.D, KeyCombination.CONTROL_DOWN));
+        menuBar.getMenus().addAll(menu1);
         ColumnConstraints cc = new ColumnConstraints(WIDTH / 4);
         RowConstraints rc = new RowConstraints(HEIGHT / 40);
         gridPane.getColumnConstraints().addAll(cc, cc, cc, cc);
@@ -49,7 +62,7 @@ public class Main extends Application {
         GridPane.setConstraints(sideBarPane, 0, 1, 1, 39);
         GridPane.setConstraints(infoPane, 1, 40, 3, 5);
 
-        gridPane.getChildren().addAll(sideBarPane, infoPane, menuPane);
+        gridPane.getChildren().addAll(sideBarPane, infoPane, menuBar);
         stackPane.getChildren().addAll(sandboxPane, gridPane);
 
         gridPane.setPickOnBounds(false);
