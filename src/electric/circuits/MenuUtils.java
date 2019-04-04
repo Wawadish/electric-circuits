@@ -1,33 +1,22 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package electric.circuits;
 
 import com.google.gson.JsonArray;
+import com.google.gson.JsonIOException;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
-import com.google.gson.stream.JsonReader;
+import com.google.gson.JsonSyntaxException;
 import electric.circuits.component.BatteryComponent;
 import electric.circuits.data.ComponentType;
 import electric.circuits.data.ElectricComponent;
-import java.awt.MenuItem;
 import java.io.BufferedReader;
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.FileWriter;
-import java.io.InputStreamReader;
-import java.io.StringReader;
+import java.io.IOException;
+import java.nio.file.Files;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Set;
 import javafx.scene.Scene;
-import javafx.scene.control.Button;
-import javafx.scene.control.CheckBox;
-import javafx.scene.control.Label;
-import javafx.scene.layout.Pane;
-import javafx.scene.paint.Color;
 import javafx.stage.FileChooser;
 import org.json.simple.JSONObject;
 import org.json.simple.JSONArray;
@@ -38,157 +27,119 @@ import org.json.simple.JSONArray;
  */
 public class MenuUtils {
 
-    public static Set<BatteryComponent> batterySet;
-    public static Set<ElectricComponent> resistor_set;
-    public static Set<ElectricComponent> led_set;
-
-    public static ComponentType type;
+    private static final String VOLTAGE = "Voltage";
+    private static final String RESISTANCE = "Resistance";
+    private static final String POSITION_X = "Positionx";
+    private static final String POSITION_Y = "Positiony";
 
     public static void loadCircuit(SandboxPane sandboxPane, Scene scene) {
-        Set<SandboxComponent> com = sandboxPane.components();
-
         try {
             FileChooser chooser = new FileChooser();
             chooser.getExtensionFilters().addAll(new FileChooser.ExtensionFilter("JSON", "*.json"));
 
             chooser.setTitle("Open Circuit File");
             File file = chooser.showOpenDialog(scene.getWindow());
-
-            if (file != null) {
-
-                sandboxPane.clearComponents();
-
-                String json = (readJsonFile(file.toString()));
-                System.out.print(json);
-                JsonObject root = new JsonParser().parse(json).getAsJsonObject();
-
-                JsonArray battery_array = root.getAsJsonArray("Batteries");
-                for (int i = 0; i < battery_array.size(); i++) {
-
-                    JsonObject battery_object = battery_array.get(i).getAsJsonObject();
-
-                    int positionx = battery_object.get("Positionx").getAsInt();
-
-                    int positiony = battery_object.get("Positiony").getAsInt();
-
-                    double voltage = battery_object.get("Voltage").getAsDouble();
-
-                    type = ComponentType.BATTERY;
-
-                    SandboxComponent comp = sandboxPane.addComponent(positionx, positiony, type);
-                    ((BatteryComponent) comp.getComponent()).setVoltage(voltage);
-
-                }
-
-                JsonArray resistor_array = root.getAsJsonArray("Resistors");
-                for (int i = 0; i < resistor_array.size(); i++) {
-                    JsonObject resistor_object = resistor_array.get(i).getAsJsonObject();
-                    int positionx = resistor_object.get("Positionx").getAsInt();
-
-                    int positiony = resistor_object.get("Positiony").getAsInt();
-
-                    double resistance = resistor_object.get("Resistance").getAsDouble();
-                    type = ComponentType.RESISTOR;
-
-                    SandboxComponent comp = sandboxPane.addComponent(positionx, positiony, type);
-                    comp.getComponent().setResistance(resistance);
-
-                }
-
-                JsonArray led_array = root.getAsJsonArray("LEDs");
-                for (int i = 0; i < led_array.size(); i++) {
-                    JsonObject led_object = led_array.get(i).getAsJsonObject();
-                    int positionx = led_object.get("Positionx").getAsInt();
-
-                    int positiony = led_object.get("Positiony").getAsInt();
-
-                    double resistance = led_object.get("Resistance").getAsDouble();
-
-                    type = ComponentType.LED;
-
-                    SandboxComponent comp = sandboxPane.addComponent(positionx, positiony, type);
-
-                    comp.getComponent().setResistance(resistance);
-
-                }
+            if (file == null) {
+                return;
             }
 
-        } catch (Exception ex) {
+            sandboxPane.clearComponents();
+            sandboxPane.setSelectedObject(null);
+
+            BufferedReader reader = Files.newBufferedReader(file.toPath());
+            JsonObject root = new JsonParser().parse(reader).getAsJsonObject();
+
+            JsonArray batteriesArray = root.getAsJsonArray("Batteries");
+            for (int i = 0; i < batteriesArray.size(); i++) {
+                JsonObject batteryObject = batteriesArray.get(i).getAsJsonObject();
+                double voltage = batteryObject.get(VOLTAGE).getAsDouble();
+                SandboxComponent comp = loadComponent(batteryObject, sandboxPane, ComponentType.BATTERY);
+                ((BatteryComponent) comp.getComponent()).setVoltage(voltage);
+
+            }
+
+            JsonArray resistorsArray = root.getAsJsonArray("Resistors");
+            for (int i = 0; i < resistorsArray.size(); i++) {
+                JsonObject resistorObject = resistorsArray.get(i).getAsJsonObject();
+                double resistance = resistorObject.get(RESISTANCE).getAsDouble();
+                SandboxComponent comp = loadComponent(resistorObject, sandboxPane, ComponentType.RESISTOR);
+                comp.getComponent().setResistance(resistance);
+            }
+
+            JsonArray ledArray = root.getAsJsonArray("LEDs");
+            for (int i = 0; i < ledArray.size(); i++) {
+                JsonObject ledObject = ledArray.get(i).getAsJsonObject();
+                double resistance = ledObject.get(RESISTANCE).getAsDouble();
+                SandboxComponent comp = loadComponent(ledObject, sandboxPane, ComponentType.LED);
+                comp.getComponent().setResistance(resistance);
+            }
+
+            reader.close();
+        } catch (JsonIOException | JsonSyntaxException | IOException ex) {
             ex.printStackTrace();
         }
+    }
+
+    private static SandboxComponent loadComponent(JsonObject batteryObject, SandboxPane sandboxPane, ComponentType type) {
+        int positionx = batteryObject.get(POSITION_X).getAsInt();
+        int positiony = batteryObject.get(POSITION_Y).getAsInt();
+        return sandboxPane.addComponent(positionx, positiony, type);
     }
 
     public static void saveCircuit(SandboxPane sandboxPane) {
         Set<SandboxComponent> com = sandboxPane.components();
 
         JSONObject obj = new JSONObject();
-        JSONArray battery_array = new JSONArray();
-        JSONArray resistor_array = new JSONArray();
-        JSONArray led_array = new JSONArray();
+        JSONArray batteriesArray = new JSONArray();
+        JSONArray resistorArray = new JSONArray();
+        JSONArray ledArray = new JSONArray();
 
-        try {
+        FileChooser chooser = new FileChooser();
+        chooser.getExtensionFilters().addAll(new FileChooser.ExtensionFilter("JSON", "*.json"));
+        File file = chooser.showSaveDialog(null);
+
+        try (FileWriter writer = new FileWriter(file)) {
             for (SandboxComponent c : com) {
-                type = c.getComponent().getType();
+                ComponentType type = c.getComponent().getType();
 
                 if (type == ComponentType.BATTERY) {
                     BatteryComponent b = (BatteryComponent) c.getComponent();
-                    Map map = new LinkedHashMap();
-                    map.put("Positionx", c.getGridX());
-                    map.put("Positiony", c.getGridY());
-                    map.put("Voltage", b.voltage());
-                    battery_array.add(map);
+                    Map<String, Object> map = new LinkedHashMap<>();
+                    map.put(POSITION_X, c.getGridX());
+                    map.put(POSITION_Y, c.getGridY());
+                    map.put(VOLTAGE, b.voltage());
+                    batteriesArray.add(map);
+                    continue;
                 }
 
                 if (type == ComponentType.RESISTOR) {
-                    Map map = new LinkedHashMap();
-                    map.put("Positionx", c.getGridX());
-                    map.put("Positiony", c.getGridY());
-                    map.put("Resistance", c.getComponent().resistance());
-                    resistor_array.add(map);
+                    Map<String, Object> map = new LinkedHashMap<>();
+                    map.put(POSITION_X, c.getGridX());
+                    map.put(POSITION_Y, c.getGridY());
+                    map.put(RESISTANCE, c.getComponent().resistance());
+                    resistorArray.add(map);
+                    continue;
                 }
 
                 if (type == ComponentType.LED) {
-                    Map map = new LinkedHashMap();
-                    map.put("Positionx", c.getGridX());
-                    map.put("Positiony", c.getGridY());
-                    map.put("Resistance", c.getComponent().resistance());
-                    led_array.add(map);
+                    Map<String, Object> map = new LinkedHashMap<>();
+                    map.put(POSITION_X, c.getGridX());
+                    map.put(POSITION_Y, c.getGridY());
+                    map.put(RESISTANCE, c.getComponent().resistance());
+                    ledArray.add(map);
+                    continue;
                 }
+
+                throw new AssertionError("Saving of type not implemented: " + type);
             }
 
-            obj.put("Batteries", battery_array);
-            obj.put("Resistors", resistor_array);
-            obj.put("LEDs", led_array);
-
-            FileWriter writer = new FileWriter("C:\\Users\\cstuser\\Desktop\\savedCircuit.json");
-            writer.write(obj.toJSONString());
-            writer.close();
-        } catch (Exception ex) {
+            obj.put("Batteries", batteriesArray);
+            obj.put("Resistors", resistorArray);
+            obj.put("LEDs", ledArray);
+            
+            obj.writeJSONString(writer);
+        } catch (IOException ex) {
             ex.printStackTrace();
-        }
-
-    }
-
-    //to read the file and compare with the output when parsing
-    public static String readJsonFile(String fileName) {
-        try {
-            String jsonString = "";
-            FileInputStream fileInput = new FileInputStream(fileName);
-            BufferedReader in = new BufferedReader(new InputStreamReader(fileInput));
-            String inputLine = "";
-
-            while ((inputLine = in.readLine()) != null) {
-                jsonString += inputLine;
-
-            }
-
-            in.close();
-            fileInput.close();
-            return jsonString;
-
-        } catch (Exception e) {
-            System.out.println("File not found");
-            return "";
         }
 
     }
