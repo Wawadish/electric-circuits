@@ -33,21 +33,18 @@ public class MenuUtils {
     private static final String POSITION_Y = "Positiony";
 
     public static void loadCircuit(SandboxPane sandboxPane, Scene scene) {
-        try {
-            FileChooser chooser = new FileChooser();
-            chooser.getExtensionFilters().addAll(new FileChooser.ExtensionFilter("JSON", "*.json"));
+        FileChooser chooser = new FileChooser();
+        chooser.getExtensionFilters().addAll(new FileChooser.ExtensionFilter("JSON", "*.json"));
 
-            chooser.setTitle("Open Circuit File");
-            File file = chooser.showOpenDialog(scene.getWindow());
-            if (file == null) {
-                return;
-            }
+        chooser.setTitle("Open Circuit File");
+        File file = chooser.showOpenDialog(scene.getWindow());
+        if (file == null) {
+            return;
+        }
 
-            sandboxPane.clearComponents();
-            sandboxPane.setSelectedObject(null);
-
-            BufferedReader reader = Files.newBufferedReader(file.toPath());
+        try (BufferedReader reader = Files.newBufferedReader(file.toPath())) {
             JsonObject root = new JsonParser().parse(reader).getAsJsonObject();
+            sandboxPane.clearStage();
 
             JsonArray batteriesArray = root.getAsJsonArray("Batteries");
             for (int i = 0; i < batteriesArray.size(); i++) {
@@ -73,8 +70,6 @@ public class MenuUtils {
                 SandboxComponent comp = loadComponent(ledObject, sandboxPane, ComponentType.LED);
                 comp.getComponent().setResistance(resistance);
             }
-
-            reader.close();
         } catch (JsonIOException | JsonSyntaxException | IOException ex) {
             ex.printStackTrace();
         }
@@ -97,6 +92,9 @@ public class MenuUtils {
         FileChooser chooser = new FileChooser();
         chooser.getExtensionFilters().addAll(new FileChooser.ExtensionFilter("JSON", "*.json"));
         File file = chooser.showSaveDialog(null);
+        if (file == null) {
+            return;
+        }
 
         try (FileWriter writer = new FileWriter(file)) {
             for (SandboxComponent c : com) {
@@ -136,7 +134,7 @@ public class MenuUtils {
             obj.put("Batteries", batteriesArray);
             obj.put("Resistors", resistorArray);
             obj.put("LEDs", ledArray);
-            
+
             obj.writeJSONString(writer);
         } catch (IOException ex) {
             ex.printStackTrace();

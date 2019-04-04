@@ -112,9 +112,11 @@ public class SandboxPane extends AnchorPane {
         runSimulation();
     }
 
-    public void clearComponents() {
+    public void clearStage() {
         components.forEach(SandboxComponent::removeFromPane);
         components.clear();
+        this.getChildren().clear();
+        setSelectedObject(null);
     }
 
     public void setSelectedObject(Object selectedComponent) {

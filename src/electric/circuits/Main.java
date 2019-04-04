@@ -39,20 +39,19 @@ public class Main extends Application {
 
     @Override
     public void start(Stage stage) throws Exception {
-        MenuBar menuBar = new MenuBar();
-        menuBar.setPrefSize(WIDTH / 4, HEIGHT / 40);
         MenuItem saveItem = new MenuItem("Save Circuit...");
         MenuItem loadItem = new MenuItem("Load Circuit...");
-        Menu menu1 = new Menu("File", null, saveItem, loadItem);
-        saveItem.setOnAction(e -> {
-            MenuUtils.saveCircuit(sandboxPane);
-        });
-        loadItem.setOnAction(e -> {
-            MenuUtils.loadCircuit(sandboxPane, scene);
-        });
+        MenuItem clearItem = new MenuItem("Clear Circuit");
+        Menu menu1 = new Menu("File", null, saveItem, loadItem, clearItem);
+        saveItem.setOnAction(e -> MenuUtils.saveCircuit(sandboxPane));
+        loadItem.setOnAction(e -> MenuUtils.loadCircuit(sandboxPane, scene));
+        clearItem.setOnAction(e -> sandboxPane.clearStage());
         saveItem.setAccelerator(new KeyCodeCombination(KeyCode.S, KeyCombination.CONTROL_DOWN));
-        loadItem.setAccelerator(new KeyCodeCombination(KeyCode.D, KeyCombination.CONTROL_DOWN));
-        menuBar.getMenus().addAll(menu1);
+        loadItem.setAccelerator(new KeyCodeCombination(KeyCode.L, KeyCombination.CONTROL_DOWN));
+        clearItem.setAccelerator(new KeyCodeCombination(KeyCode.D, KeyCombination.CONTROL_DOWN));
+        MenuBar menuBar = new MenuBar(menu1);
+        menuBar.setPrefSize(WIDTH / 4, HEIGHT / 40);
+
         ColumnConstraints cc = new ColumnConstraints(WIDTH / 4);
         RowConstraints rc = new RowConstraints(HEIGHT / 40);
         gridPane.getColumnConstraints().addAll(cc, cc, cc, cc);
