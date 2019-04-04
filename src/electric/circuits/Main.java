@@ -41,10 +41,9 @@ public class Main extends Application {
     public void start(Stage stage) throws Exception {
         MenuBar menuBar = new MenuBar();
         menuBar.setPrefSize(WIDTH / 4, HEIGHT / 40);
-        Menu menu1 = new Menu("File");
-        MenuItem saveItem = new MenuItem("Save");
-        MenuItem loadItem = new MenuItem("Load");
-        menu1.getItems().addAll(saveItem, loadItem);
+        MenuItem saveItem = new MenuItem("Save Circuit...");
+        MenuItem loadItem = new MenuItem("Load Circuit...");
+        Menu menu1 = new Menu("File", null, saveItem, loadItem);
         saveItem.setOnAction(e -> {
             MenuUtils.saveCircuit(sandboxPane);
         });
