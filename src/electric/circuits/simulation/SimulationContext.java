@@ -24,150 +24,162 @@ import org.ejml.simple.SimpleMatrix;
  */
 public class SimulationContext {
 
-	private final Map<ElectricComponent, Variable> currentVariables;
+    private final Map<ElectricComponent, Variable> currentVariables;
 
-	public SimulationContext() {
-		this.currentVariables = new IdentityHashMap<>();
-	}
+    public SimulationContext() {
+        this.currentVariables = new IdentityHashMap<>();
+    }
 
-	public Variable getVariable(ElectricComponent comp) {
-		if (comp == null) {
-			throw new NullPointerException();
-		}
+    public Variable getVariable(ElectricComponent comp) {
+        if (comp == null) {
+            throw new NullPointerException();
+        }
 
-		return currentVariables.computeIfAbsent(comp, c -> new Variable());
-	}
+        return currentVariables.computeIfAbsent(comp, c -> new Variable());
+    }
 
-	public void setVariable(ElectricComponent comp, Variable var) {
-		if (comp == null || var == null) {
-			throw new NullPointerException();
-		}
+    public void setVariable(ElectricComponent comp, Variable var) {
+        if (comp == null || var == null) {
+            throw new NullPointerException();
+        }
 
-		currentVariables.put(comp, var);
-	}
+        currentVariables.put(comp, var);
+    }
 
-	public void clearVariables() {
-		currentVariables.clear();
-	}
+    public void clearVariables() {
+        currentVariables.clear();
+    }
 
-	public void runSimulation(BatteryComponent battery) {
-		// 1. Find all paths
-		WireMap wireMap = new WireMap();
-		Set<CircuitPath> paths = explorePaths(battery, true, wireMap);
-		paths.stream().forEach(System.out::println);
+    public void runSimulation(BatteryComponent battery) {
+        try {
+// 1. Find all paths
+            WireMap wireMap = new WireMap();
+            Set<CircuitPath> paths = explorePaths(battery, true, wireMap);
+            paths.stream().forEach(System.out::println);
+            
+            System.out.println("Found " + paths.size() + " paths");
+            
+            paths.stream().flatMap(c -> c.wireGroups(wireMap)).forEach(wg -> {
+                System.out.println("Wire group: " + wg);
+            });
 
-		System.out.println("Found " + paths.size() + " paths");
+            // 2. Reduce the unknowns
+            paths.stream().flatMap(c -> c.wireGroups(wireMap))
+                    .distinct()
+                    .filter(WireGroup::hasTwoConnections)
+                    .forEach(wg -> {
+                        // Collect the two components
+                        Iterator<ElectricConnection> it = wg.connections().iterator();
+                        ElectricConnection conn1 = it.next();
+                        ElectricConnection conn2 = it.next();
 
-		paths.stream().flatMap(c -> c.wireGroups(wireMap)).forEach(wg -> {
-			System.out.println("Wire group: " + wg);
-		});
+                        // Bind the two components together
+                        boolean bound = BoundVariable.bind(conn1.component(), conn2.component());
+                        System.out.println("binding " + conn1.component() + " and " + conn2.component() + ": " + bound);
+                    });
 
-		// 2. Reduce the unknowns
-		paths.stream().flatMap(c -> c.wireGroups(wireMap))
-				.filter(WireGroup::hasTwoConnections)
-				.forEach(wg -> {
-					// Collect the two components
-					Iterator<ElectricConnection> it = wg.connections().iterator();
-					ElectricConnection conn1 = it.next();
-					ElectricConnection conn2 = it.next();
+            // Count wire groups
+            int wireGroups = (int) paths.stream().flatMap(c -> c.wireGroups(wireMap)).count();
 
-					// Bind the two components together
-					boolean bound = BoundVariable.bind(conn1.component(), conn2.component());
-					System.out.println("binding " + conn1.component() + " and " + conn2.component() + ": " + bound);
-				});
+            // 3. Prepare the matrix equations
+            Map<Variable, Integer> inverseIndex = new IdentityHashMap<>();
+            List<Variable> index = paths.stream().flatMap(CircuitPath::components).map(ElectricComponent::current).filter(v -> !(v instanceof BoundVariable)).distinct().collect(Collectors.toList());
+            for (int i = 0; i < index.size(); ++i) {
+                inverseIndex.put(index.get(i), i);
+            }
 
-		
-		
-		// 3. Prepare the matrix equations
-		Map<Variable, Integer> inverseIndex = new IdentityHashMap<>();
-		List<Variable> index = paths.stream().flatMap(CircuitPath::components).map(ElectricComponent::current).filter(v -> !(v instanceof BoundVariable)).distinct().collect(Collectors.toList());
-		for (int i = 0; i < index.size(); ++i) {
-			inverseIndex.put(index.get(i), i);
-		}
+            // TODO: support multiple batteries
+            SimpleMatrix matrix = new SimpleMatrix(paths.size() + wireGroups, index.size());
+            SimpleMatrix constants = new SimpleMatrix(paths.size() + wireGroups, 1);
+            
+            int row = 0;
+            for (CircuitPath path : paths) {
+                // Get current row
+                int r = row++;
 
-		// TODO: support multiple batteries
-		SimpleMatrix matrix = new SimpleMatrix(2 * paths.size(), index.size());
-		SimpleMatrix constants = new SimpleMatrix(2 * paths.size(), 1);
+                // Add all the resistances
+                path.components().forEach(comp -> {
+                    Variable parent = comp.current().parent();
+                    int col = inverseIndex.get(parent);
+                    matrix.set(r, col, comp.resistance() + matrix.get(r, col));
+                });
 
-		int row = 0;
-		for (CircuitPath path : paths) {
-			// Get current row
-			int r = row++;
+                // TODO: support multiple batteries
+                constants.set(r, 0, battery.voltage());
+                
+                for (Iterator<WireGroup> it = path.wireGroups(wireMap).iterator(); it.hasNext();) {
+                    int r2 = row++;
+                    WireGroup wg = it.next();
+                    System.out.println("Expanding " + wg);
+                    wg.connections().stream().forEach(conn -> {
+                        ElectricComponent comp = conn.component();
+                        Variable parent = comp.current().parent();
+                        Integer col = inverseIndex.get(parent);
+                        if (col == null) {
+                            return;
+                        }
+                        int x = (conn.isLeft()) ? -1 : 1;
+                        matrix.set(r2, col, x + matrix.get(r2, col));
+                        System.out.println("Adding " + x + " for " + comp.getType() + ": " + (matrix.get(r2, col)) + " at " + r2 + ", " + col);
+                        constants.set(r2, 0, 0);
+                    });
+                }
+                
+            }
+            
+            System.out.println(matrix);
+            System.out.println(constants);
 
-			// Add all the resistances
-			path.components().forEach(comp -> {
-				Variable parent = comp.current().parent();
-				int col = inverseIndex.get(parent);
-				matrix.set(r, col, comp.resistance() + matrix.get(r, col));
-			});
+            // Solve the equations and set the variables
+            SimpleMatrix x = matrix.solve(constants);
+            
+            for (int i = 0; i < index.size(); ++i) {
+                double current = x.get(i, 0);
+                index.get(i).solve(current);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
 
-			// TODO: support multiple batteries
-			constants.set(r, 0, battery.voltage());
+    private Set<CircuitPath> explorePaths(ElectricComponent start, boolean left, WireMap wireMap) {
 
-			int r2 = row++;
-			WireGroup wg = path.explore(wireMap);
-			System.out.println("Expanding "+wg);
-			wg.connections().stream().map(ElectricConnection::component).forEach(comp -> {
-				Variable parent = comp.current().parent();
-				int col = inverseIndex.get(parent);
-				int x = (comp instanceof BatteryComponent) ? -1 : 1;
-				matrix.set(r2, col, x + matrix.get(r2, col));
-				System.out.println("Adding "+x+" for "+comp.getType()+": "+(matrix.get(r2, col))+" at "+r2+", "+col);
-			});
+        // Prepare the search
+        Set<CircuitPath> solutions = new HashSet<>();
+        Queue<CircuitPath> queue = new LinkedList<>();
 
-			constants.set(r2, 0, 0);
-		}
-		
-		System.out.println(matrix);
-		System.out.println(constants);
+        // Insert starting point
+        queue.add(new CircuitPath(new ElectricConnection(start, left)));
 
-		// Solve the equations and set the variables
-		SimpleMatrix x = matrix.solve(constants);
+        // Loop for as long as there are paths to expand
+        while (!queue.isEmpty()) {
+            CircuitPath path = queue.poll();
 
-		for (int i = 0; i < index.size(); ++i) {
-			double current = x.get(i, 0);
-			index.get(i).solve(current);
-		}
-	}
+            // Check if this wire group was already traversed
+            WireGroup group = path.explore(wireMap);
+            if (path.contains(group, wireMap)) {
+                continue;
+            }
 
-	private Set<CircuitPath> explorePaths(ElectricComponent start, boolean left, WireMap wireMap) {
+            // Loop through potential extensions to current path
+            for (ElectricConnection conn : group.connections()) {
+                // Check for solution
+                if (path.isClosedWith(conn)) {
+                    solutions.add(new CircuitPath(path));
+                    continue;
+                }
 
-		// Prepare the search
-		Set<CircuitPath> solutions = new HashSet<>();
-		Queue<CircuitPath> queue = new LinkedList<>();
+                // Check for inner loop
+                if (path.contains(conn.component())) {
+                    continue;
+                }
 
-		// Insert starting point
-		queue.add(new CircuitPath(new ElectricConnection(start, left)));
+                // Append to path and keep searching
+                queue.add(path.copyAndAppend(conn));
+            }
+        }
 
-		// Loop for as long as there are paths to expand
-		while (!queue.isEmpty()) {
-			CircuitPath path = queue.poll();
-
-			// Check if this wire group was already traversed
-			WireGroup group = path.explore(wireMap);
-			if (path.contains(group, wireMap)) {
-				continue;
-			}
-
-			// Loop through potential extensions to current path
-			for (ElectricConnection conn : group.connections()) {
-				// Check for solution
-				if (path.isClosedWith(conn)) {
-					solutions.add(new CircuitPath(path));
-					continue;
-				}
-
-				// Check for inner loop
-				if (path.contains(conn.component())) {
-					continue;
-				}
-
-				// Append to path and keep searching
-				queue.add(path.copyAndAppend(conn));
-			}
-		}
-
-		return solutions;
-	}
+        return solutions;
+    }
 
 }

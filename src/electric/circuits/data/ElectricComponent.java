@@ -102,4 +102,11 @@ public class ElectricComponent {
 	public ComponentType getType() {
 		return type;
 	}
+
+    @Override
+    public String toString() {
+        return type.toString();
+    }
+    
+    
 }
