@@ -16,15 +16,17 @@ import javafx.scene.shape.Line;
  */
 public class SandboxWire {
 
+	// The radius of the junction circle
 	private static final double JUNCTION_RADIUS = 6;
 
+	// The graphics of this wire
+	private final Line line;
 	private final SandboxPane pane;
 	private final Circle junctions[];
-	private final Line line;
 
+	// The backend related to this wire
 	private final ElectricWire wire;
 	private SandboxComponent component;
-
 	private final Set<ElectricWire>[] cachedConnectionsPerJunction;
 
 	public SandboxWire(SandboxPane pane) {
@@ -41,20 +43,35 @@ public class SandboxWire {
 			new HashSet<>()
 		};
 
-		forEachJunction((j, i) -> {
-			j.setUserData(i);
-		});
+		// Assigns to each junction their index
+		forEachJunction((j, i) -> j.setUserData(i));
 	}
 
+	/**
+	 * Initializes this {@code SandboxWire} as a hanging wire at the given
+	 * screen coordinates.
+	 *
+	 * @param x the x screen coordinate.
+	 * @param y the y screen coordinate.
+	 */
 	public void initialize(double x, double y) {
 		initialize(null, true, x, y);
 	}
 
+	/**
+	 * Initializes this {@code SandboxWire} for a given
+	 * {@code SandboxComponent}.
+	 *
+	 * @param comp the {@code SandboxComponent} to associate this wire with.
+	 * @param left whether or not this wire is attached to the left
+	 * ({@code true}) or the right ({@code false}) of the component.
+	 */
 	public void initialize(SandboxComponent comp, boolean left) {
 		initialize(comp, left, 0, 0);
 	}
 
-	public void initialize(SandboxComponent comp, boolean left, double x, double y) {
+	// Internal method to handle the initiation of both hanging and attached wires
+	private void initialize(SandboxComponent comp, boolean left, double x, double y) {
 		this.component = comp;
 
 		// Initialize the line
@@ -66,7 +83,7 @@ public class SandboxWire {
 		line.setStrokeWidth(5);
 		pane.getChildren().add(line);
 
-		// Initialize circles
+		// Initialize the circles
 		for (int i = 0; i < junctions.length; ++i) {
 			Circle j = junctions[i];
 			j.setFill(Color.WHITE);
@@ -74,7 +91,7 @@ public class SandboxWire {
 			pane.getChildren().add(j);
 		}
 
-		// Setup position
+		// Setup the position
 		if (comp != null) {
 			ImageView imageView = comp.getImageView();
 
@@ -91,6 +108,7 @@ public class SandboxWire {
 			});
 		}
 
+		// Make one end draggable
 		setupDrag(junctions[1], 1);
 
 		// If this is a hanging wire, both ends should be made draggable
@@ -145,6 +163,12 @@ public class SandboxWire {
 		});
 	}
 
+	/**
+	 * Sets up the dragging mechanics of a circle junction.
+	 *
+	 * @param circle the circle to set up.
+	 * @param i the index of the junction.
+	 */
 	private void setupDrag(Circle circle, int i) {
 		circle.setOnDragDetected(e -> {
 			cachedConnectionsPerJunction[i].forEach(w -> {
@@ -164,12 +188,20 @@ public class SandboxWire {
 		});
 	}
 
+	/**
+	 * Utility method to apply some code for each junction.
+	 *
+	 * @param cons the {@code BiConsumer} to apply.
+	 */
 	private void forEachJunction(BiConsumer<Circle, Integer> cons) {
 		for (int i = 0; i < junctions.length; ++i) {
 			cons.accept(junctions[i], i);
 		}
 	}
 
+	/**
+	 * Removes this wire from the sandbox pane.
+	 */
 	public void removeFromPane() {
 		pane.getChildren().remove(line);
 		forEachJunction((j, i) -> {
@@ -192,6 +224,9 @@ public class SandboxWire {
 		return wire;
 	}
 
+	/**
+	 * Utility class which holds data pertaining to a wire drag.
+	 */
 	public class WireDragData {
 
 		private final Circle circle;
