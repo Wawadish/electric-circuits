@@ -22,19 +22,19 @@ import javafx.stage.Stage;
  */
 public class Main extends Application {
 
+	// Width and height of the GUI application
 	public static final int WIDTH = 1280;
 	public static final int HEIGHT = 960;
 
+	// The different main components of the application
 	private final StackPane stackPane = new StackPane();
-
 	private final InfoPane infoPane = new InfoPane(this);
-	private final SandboxPane sandboxPane = new SandboxPane(this);
 	private final SideBarPane sideBarPane = new SideBarPane();
+	private final SandboxPane sandboxPane = new SandboxPane(this);
 
+	// Used to track the position of the mouse
 	private final SimpleDoubleProperty xMouse = new SimpleDoubleProperty();
 	private final SimpleDoubleProperty yMouse = new SimpleDoubleProperty();
-
-	private Scene scene;
 
 	public InfoPane getInfoPane() {
 		return infoPane;
@@ -46,7 +46,8 @@ public class Main extends Application {
 
 	@Override
 	public void start(Stage stage) throws Exception {
-		MenuBar menuBar = initMenuBar();
+		Scene scene = new Scene(stackPane, WIDTH, HEIGHT);
+		MenuBar menuBar = initMenuBar(scene);
 		GridPane gridPane = initGridPane(menuBar);
 
 		gridPane.getChildren().addAll(sideBarPane, infoPane, menuBar);
@@ -54,7 +55,6 @@ public class Main extends Application {
 
 		gridPane.setPickOnBounds(false);
 
-		scene = new Scene(stackPane, WIDTH, HEIGHT);
 		scene.setOnMouseMoved(e -> {
 			xMouse.set(e.getX());
 			yMouse.set(e.getY());
@@ -67,6 +67,12 @@ public class Main extends Application {
 		stage.show();
 	}
 
+	/**
+	 * Creates and initializes the grid pane of the GUI.
+	 *
+	 * @param menuBar the {@code MenuBar}.
+	 * @return the newly created {@code GridPane}.
+	 */
 	private GridPane initGridPane(MenuBar menuBar) {
 		GridPane gridPane = new GridPane();
 		ColumnConstraints cc = new ColumnConstraints(WIDTH / 4);
@@ -79,7 +85,13 @@ public class Main extends Application {
 		return gridPane;
 	}
 
-	private MenuBar initMenuBar() {
+	/**
+	 * Creates and initializes the menu bar of the GUI.
+	 *
+	 * @param scene the {@code Scene} of the GUI.
+	 * @return the newly created {@code MenuBar}.
+	 */
+	private MenuBar initMenuBar(Scene scene) {
 		MenuItem saveItem = new MenuItem("Save Circuit...");
 		MenuItem loadItem = new MenuItem("Load Circuit...");
 		MenuItem clearItem = new MenuItem("Clear Circuit");
@@ -95,6 +107,14 @@ public class Main extends Application {
 		return menuBar;
 	}
 
+	/**
+	 * Invoked whenever a key is pressed. Handles deletion of selected
+	 * components, creation of new wires, running the simulation manually, and
+	 * toggling the GUI.
+	 *
+	 * @param key the {@code KeyCode} pressed.
+	 * @param gridPane the {@code GridPane} instance of the GUI.
+	 */
 	private void onKeyPressed(KeyCode key, GridPane gridPane) {
 		// Delete selected component or wire
 		if (key == KeyCode.BACK_SPACE || key == KeyCode.DELETE) {
@@ -117,6 +137,11 @@ public class Main extends Application {
 		}
 	}
 
+	/**
+	 * Handles the toggling of the GUI
+	 *
+	 * @param gridPane the {@code GridPane} of the GUI.
+	 */
 	private void handleToggleGUI(GridPane gridPane) {
 		gridPane.getChildren().forEach(item -> {
 			if (!(item instanceof MenuBar)) {
@@ -125,13 +150,21 @@ public class Main extends Application {
 		});
 	}
 
+	/**
+	 * Runs the simulation.
+	 */
 	private void handleRunSimulation() {
 		Utils.debug("Running simulation...");
 		if (!sandboxPane.runSimulation()) {
 			Utils.debug("Failure!!!!");
+		} else {
+			Utils.debug("Success!");
 		}
 	}
 
+	/**
+	 * Creates a new hanging wire at the current position of the mouse.
+	 */
 	private void handleNewWire() {
 		if (sandboxPane.getWireDrag() != null) {
 			return;
@@ -141,6 +174,9 @@ public class Main extends Application {
 		wire.initialize(xMouse.get(), yMouse.get());
 	}
 
+	/**
+	 * Deletes the currently selected component or hanging wire, if any.
+	 */
 	private void handleDelete() {
 		SandboxComponent comp = sandboxPane.getSelectedComponent();
 		if (comp != null) {
