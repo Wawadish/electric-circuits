@@ -13,14 +13,19 @@ import javafx.scene.layout.Priority;
 import javafx.scene.text.Font;
 
 /**
+ * The Information and Output Pane allows the user to configure the voltage of
+ * batteries and the resistance of components, as well as viewing the results of
+ * the simulation, including the current and the voltage passing through each
+ * component.
  *
- * @author Wawa
+ * Whenever a component is (de)selected, the info pane rebuilds itself to show
+ * relevant information for each component.
+ *
+ * @author Wawa, Tomer Moran
  */
 public class InfoPane extends GridPane {
 
-	private final Main main;
-
-	// creates labels for the elements in the indo panne
+	// Label texts of the info pane
 	private final Label titleLabel;
 	private final Label voltageReadingLabel;
 	private final Label currentReadingLabel;
@@ -28,53 +33,27 @@ public class InfoPane extends GridPane {
 	private final Label resistancePromptLabel;
 	private final Label noElementLabel;
 
-	// creates textt fields to input data that will link to the components in the sandbox, i.e voltageLabel, resistanceLabel, etc
+	// Configurable text fields of the info pane
 	private final TextField voltageTextField;
 	private final TextField resistanceTextField;
+
+	private final Main main;
 	private ElectricComponent selectedComponent;
 
 	public InfoPane(Main main) {
 		this.main = main;
 
-		setStyle("-fx-background-color: #dedfe0;");
-		setPrefSize(Main.WIDTH - Main.WIDTH / 5, Main.HEIGHT / 4);
-
-		Font textFont = new Font("System", 17);
-		Font promptFont = new Font("System", 13);
-
-		// Sets all elements' size, and poistion in the pane
-		titleLabel = new Label("Equations and Configurations");
-		titleLabel.setFont(new Font("System Bold", 30));
-
 		noElementLabel = new Label("No element selected!");
-		noElementLabel.setPadding(new Insets(20, 0, 0, 0));
-		noElementLabel.setFont(textFont);
-
-		voltageReadingLabel = new Label("Voltmeter Reading: 0.0V");
-		voltageReadingLabel.setFont(textFont);
+		titleLabel = new Label("Equations and Configurations");
 		currentReadingLabel = new Label("Ampmeter Reading: 0.0A");
-		currentReadingLabel.setFont(textFont);
+		voltageReadingLabel = new Label("Voltmeter Reading: 0.0V");
 
-		voltageReadingLabel.setPadding(new Insets(20, 40, 0, 0));
-		currentReadingLabel.setPadding(new Insets(20, 40, 0, 0));
-
-		voltagePromptLabel = new Label("Enter Voltage: ");
-		voltagePromptLabel.setFont(textFont);
 		voltageTextField = new TextField();
-		voltageTextField.setMaxWidth(200);
-		voltageTextField.setFont(promptFont);
-
-		resistancePromptLabel = new Label("Enter resistance: ");
-		resistancePromptLabel.setFont(textFont);
 		resistanceTextField = new TextField();
-		resistanceTextField.setMaxWidth(200);
-		resistanceTextField.setFont(promptFont);
+		voltagePromptLabel = new Label("Enter Voltage: ");
+		resistancePromptLabel = new Label("Enter resistance: ");
 
-		// Updates the voltage of the battery if a valid, positive number was entered.
-		voltageTextField.setOnAction(e -> updateBatteryVoltage());
-
-		// Updates the resistance of the component if a valid, positive number was entered.
-		resistanceTextField.setOnAction(e -> updateResistance());
+		initInfoPane();
 
 		// Add elements to the pane
 		ColumnConstraints constr = new ColumnConstraints();
@@ -86,6 +65,48 @@ public class InfoPane extends GridPane {
 		onSelectComponent(null);
 	}
 
+	/**
+	 * Initializes this {@code InfoPane} by styling all the components.
+	 */
+	private void initInfoPane() {
+		setStyle("-fx-background-color: #dedfe0;");
+		setPrefSize(Main.WIDTH - Main.WIDTH / 5, Main.HEIGHT / 4);
+
+		Font textFont = new Font("System", 17);
+		Font promptFont = new Font("System", 13);
+		Font titleFont = new Font("System Bold", 30);
+
+		// Style the components
+		noElementLabel.setPadding(new Insets(20, 0, 0, 0));
+		voltageReadingLabel.setPadding(new Insets(20, 40, 0, 0));
+		currentReadingLabel.setPadding(new Insets(20, 40, 0, 0));
+
+		titleLabel.setFont(titleFont);
+		noElementLabel.setFont(textFont);
+		voltageReadingLabel.setFont(textFont);
+		currentReadingLabel.setFont(textFont);
+		voltagePromptLabel.setFont(textFont);
+		resistancePromptLabel.setFont(textFont);
+		voltageTextField.setFont(promptFont);
+		resistanceTextField.setFont(promptFont);
+
+		voltageTextField.setMaxWidth(200);
+		resistanceTextField.setMaxWidth(200);
+
+		// Updates the voltage of the battery if a valid, positive number was entered.
+		voltageTextField.setOnAction(e -> updateBatteryVoltage());
+
+		// Updates the resistance of the component if a valid, positive number was entered.
+		resistanceTextField.setOnAction(e -> updateResistance());
+	}
+
+	/**
+	 * Invoked when a component is selected or unselected. Rebuilds the info
+	 * pane and displays the appropriate fields.
+	 *
+	 * @param component the newly selected {@code ElectricComponent}, or
+	 * {@code null} if unselecting.
+	 */
 	public void onSelectComponent(ElectricComponent component) {
 		this.selectedComponent = component;
 
@@ -133,6 +154,11 @@ public class InfoPane extends GridPane {
 		add(box, 1, 1);
 	}
 
+	/**
+	 * Updates the resistance of the currently selected
+	 * {@code ElectricComponent} depending on the value entered by the user in
+	 * the resistance text field.
+	 */
 	private void updateResistance() {
 		try {
 			double resistance = Double.valueOf(resistanceTextField.getText());
@@ -151,6 +177,10 @@ public class InfoPane extends GridPane {
 		}
 	}
 
+	/**
+	 * Updates the voltage of the currently selected {@code BatteryComponent}
+	 * depending on the value entered by the user in the voltage text field.
+	 */
 	private void updateBatteryVoltage() {
 		try {
 			double voltage = Double.valueOf(voltageTextField.getText());
@@ -171,10 +201,20 @@ public class InfoPane extends GridPane {
 		}
 	}
 
+	/**
+	 * Styles a {@code TextField} to indicate success.
+	 *
+	 * @param field the {@code TextField} to style.
+	 */
 	private void setSuccess(TextField field) {
 		field.setStyle("-fx-text-box-border: green; -fx-focus-color: green;");
 	}
 
+	/**
+	 * Styles a {@code TextField} to indicate failure.
+	 *
+	 * @param field the {@code TextField} to style.
+	 */
 	private void setError(TextField field) {
 		field.setStyle("-fx-text-box-border: red; -fx-focus-color: red;");
 	}
