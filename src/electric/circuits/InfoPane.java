@@ -18,6 +18,8 @@ import javafx.scene.text.Font;
  */
 public class InfoPane extends GridPane {
 
+	private final Main main;
+
 	// creates labels for the elements in the indo panne
 	private final Label titleLabel;
 	private final Label voltageReadingLabel;
@@ -31,7 +33,9 @@ public class InfoPane extends GridPane {
 	private final TextField resistanceTextField;
 	private ElectricComponent selectedComponent;
 
-	public InfoPane() {
+	public InfoPane(Main main) {
+		this.main = main;
+
 		setStyle("-fx-background-color: #dedfe0;");
 		setPrefSize(Main.WIDTH - Main.WIDTH / 5, Main.HEIGHT / 4);
 
@@ -98,12 +102,15 @@ public class InfoPane extends GridPane {
 
 		boolean resolved = component.current().resolve();
 		if (resolved) {
-			currentReadingLabel.setText(String.format("Ampmeter Reading: %.1f A", component.current().get()));
+			double current = Math.abs(component.current().get());
+			currentReadingLabel.setText(String.format("Ampmeter Reading: %.1f A", current));
+		} else {
+			currentReadingLabel.setText("Ampmeter Reading: ---");
 		}
 
 		HBox box;
 		if (component instanceof BatteryComponent) {
-			double voltage = ((BatteryComponent) component).voltage();
+			double voltage = Math.abs(((BatteryComponent) component).voltage());
 			voltageTextField.setText("" + voltage);
 			voltageReadingLabel.setText(String.format("Voltmeter Reading: %.1f V", voltage));
 			box = new HBox(voltagePromptLabel, voltageTextField);
@@ -113,7 +120,10 @@ public class InfoPane extends GridPane {
 			box = new HBox(resistancePromptLabel, resistanceTextField);
 
 			if (resolved) {
-				voltageReadingLabel.setText(String.format("Voltmeter Reading: %.1f V", component.resistance() * component.current().get()));
+				double voltage = Math.abs(component.resistance() * component.current().get());
+				voltageReadingLabel.setText(String.format("Voltmeter Reading: %.1f V", voltage));
+			} else {
+				voltageReadingLabel.setText("Voltmeter Reading: ---");
 			}
 
 		}
@@ -131,8 +141,10 @@ public class InfoPane extends GridPane {
 			}
 
 			selectedComponent.setResistance(resistance);
-			System.out.println("Set resistance: " + resistance);
+			Utils.debug("Set resistance: " + resistance);
 			setSuccess(resistanceTextField);
+
+			main.getSandboxPane().runSimulation();
 		} catch (NumberFormatException ex) {
 			resistanceTextField.setText("Invalid input");
 			setError(resistanceTextField);
@@ -148,8 +160,10 @@ public class InfoPane extends GridPane {
 
 			voltageReadingLabel.setText(String.format("Voltmeter Reading: %.1f V", voltage));
 			((BatteryComponent) selectedComponent).setVoltage(voltage);
-			System.out.println("Set voltage: " + voltage);
+			Utils.debug("Set voltage: " + voltage);
 			setSuccess(voltageTextField);
+
+			main.getSandboxPane().runSimulation();
 		} catch (NumberFormatException ex) {
 			voltageTextField.setText("");
 			voltageTextField.setPromptText("Enter a positive number");

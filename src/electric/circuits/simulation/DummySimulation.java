@@ -64,7 +64,7 @@ public class DummySimulation {
 
 		// 1. Find all paths
 		Set<CircuitPath> paths = explorePaths(battery, true, wireMap);
-		paths.stream().forEach(System.out::println);
+		paths.stream().forEach(Utils::debug);
 
 		// 2. Reduce the unknowns
 		paths.stream().flatMap(c -> c.wireGroups(wireMap))
@@ -76,7 +76,7 @@ public class DummySimulation {
 					ElectricConnection conn2 = it.next();
 
 					// Bind the two components together
-					System.out.println("binding " + conn1.component() + " and " + conn2.component());
+					Utils.debug("binding " + conn1.component() + " and " + conn2.component());
 					BoundVariable.bind(conn1.component(), conn2.component());
 				});
 
@@ -118,17 +118,17 @@ public class DummySimulation {
 		}
 
 		SimpleMatrix x = matrix.solve(constants);
-		System.out.println("Coefficients");
-		System.out.println("--------------------");
-		System.out.println(matrix);
+		Utils.debug("Coefficients");
+		Utils.debug("--------------------");
+		Utils.debug(matrix.toString());
 
-		System.out.println("Constants");
-		System.out.println("--------------------");
-		System.out.println(constants);
+		Utils.debug("Constants");
+		Utils.debug("--------------------");
+		Utils.debug(constants.toString());
 
-		System.out.println("Solutions");
-		System.out.println("--------------------");
-		System.out.println(x);
+		Utils.debug("Solutions");
+		Utils.debug("--------------------");
+		Utils.debug(x.toString());
 
 		for (int i = 0; i < index.size(); ++i) {
 			double current = x.get(i, 0);
@@ -185,8 +185,7 @@ public class DummySimulation {
 
 	private static void printCurrents(ElectricComponent... comps) {
 		for (ElectricComponent c : comps) {
-
-			System.out.println(String.format("%s: %.2f", c, c.current().get()));
+			Utils.debug(String.format("%s: %.2f", c, c.current().get()));
 		}
 	}
 }

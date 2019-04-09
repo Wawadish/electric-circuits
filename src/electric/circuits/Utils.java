@@ -17,6 +17,7 @@ import javafx.scene.input.TransferMode;
  */
 public class Utils {
 
+	public static final boolean DEBUG = false;
 	public static final double EPSILON = 0.001;
 
 	public static boolean equals(double a, double b) {
@@ -88,4 +89,9 @@ public class Utils {
 		return SandboxPane.GRID_SIZE * Math.floor(x / SandboxPane.GRID_SIZE);
 	}
 
+	public static void debug(Object obj) {
+		if (DEBUG) {
+			System.out.println(obj);
+		}
+	}
 }

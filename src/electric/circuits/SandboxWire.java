@@ -131,7 +131,7 @@ public class SandboxWire {
 				pane.getChildren().removeAll(circle);
 				pane.getChildren().add(circle);
 
-				System.out.println("Connecting two elements");
+				Utils.debug("Connecting two elements");
 				Utils.connect(wire, other.wire);
 				cachedConnectionsPerJunction[i].add(other.wire);
 				other.cachedConnectionsPerJunction[(int) circle.getUserData()].add(wire);
@@ -149,7 +149,7 @@ public class SandboxWire {
 		circle.setOnDragDetected(e -> {
 			cachedConnectionsPerJunction[i].forEach(w -> {
 				Utils.disconnect(wire, w);
-				System.out.println("disconnecting " + wire + " from " + w);
+				Utils.debug("disconnecting " + wire + " from " + w);
 			});
 
 			cachedConnectionsPerJunction[i].clear();
