@@ -1,4 +1,7 @@
-package electric.circuits.data;
+package electric.circuits.simulation;
+
+import electric.circuits.simulation.Variable;
+import electric.circuits.component.ElectricComponent;
 
 /**
  *

@@ -1,4 +1,7 @@
-package electric.circuits.data;
+package electric.circuits.component;
+
+import electric.circuits.component.ElectricComponent;
+import electric.circuits.wire.ElectricWire;
 
 /**
  * Represents a connection to an electric component. An

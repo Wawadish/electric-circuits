@@ -6,7 +6,7 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import com.google.gson.JsonSyntaxException;
 import electric.circuits.component.BatteryComponent;
-import electric.circuits.data.ComponentType;
+import electric.circuits.component.ComponentType;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileWriter;

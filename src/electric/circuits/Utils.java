@@ -1,9 +1,9 @@
 package electric.circuits;
 
-import electric.circuits.data.ComponentType;
-import electric.circuits.data.ElectricComponent;
-import electric.circuits.data.ElectricConnection;
-import electric.circuits.data.ElectricWire;
+import electric.circuits.component.ComponentType;
+import electric.circuits.component.ElectricComponent;
+import electric.circuits.component.ElectricConnection;
+import electric.circuits.wire.ElectricWire;
 import javafx.scene.Node;
 import javafx.scene.image.Image;
 import javafx.scene.input.ClipboardContent;

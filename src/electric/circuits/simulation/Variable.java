@@ -1,4 +1,4 @@
-package electric.circuits.data;
+package electric.circuits.simulation;
 
 import javafx.beans.property.SimpleDoubleProperty;
 

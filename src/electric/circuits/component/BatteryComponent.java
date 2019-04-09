@@ -1,7 +1,5 @@
 package electric.circuits.component;
 
-import electric.circuits.data.ComponentType;
-import electric.circuits.data.ElectricComponent;
 import electric.circuits.simulation.SimulationContext;
 import javafx.scene.image.Image;
 

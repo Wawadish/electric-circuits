@@ -1,6 +1,6 @@
 package electric.circuits;
 
-import electric.circuits.data.ElectricWire;
+import electric.circuits.wire.ElectricWire;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.function.BiConsumer;

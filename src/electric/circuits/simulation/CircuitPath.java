@@ -1,9 +1,9 @@
 package electric.circuits.simulation;
 
-import electric.circuits.data.ElectricComponent;
-import electric.circuits.data.ElectricConnection;
-import electric.circuits.data.WireMap;
-import electric.circuits.data.WireGroup;
+import electric.circuits.component.ElectricComponent;
+import electric.circuits.component.ElectricConnection;
+import electric.circuits.wire.WireMap;
+import electric.circuits.wire.WireGroup;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.stream.Stream;

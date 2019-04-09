@@ -2,9 +2,9 @@ package electric.circuits;
 
 import electric.circuits.SandboxWire.WireDragData;
 import electric.circuits.component.BatteryComponent;
-import electric.circuits.data.ComponentType;
-import electric.circuits.data.ElectricComponent;
-import electric.circuits.data.Variable;
+import electric.circuits.component.ComponentType;
+import electric.circuits.component.ElectricComponent;
+import electric.circuits.simulation.Variable;
 import electric.circuits.simulation.SimulationContext;
 import java.util.HashSet;
 import java.util.Set;

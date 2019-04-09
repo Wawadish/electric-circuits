@@ -1,5 +1,7 @@
-package electric.circuits.data;
+package electric.circuits.component;
 
+import electric.circuits.wire.ElectricWire;
+import electric.circuits.simulation.Variable;
 import electric.circuits.simulation.SimulationContext;
 
 /**

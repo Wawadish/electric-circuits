@@ -1,5 +1,6 @@
-package electric.circuits.data;
+package electric.circuits.wire;
 
+import electric.circuits.component.ElectricConnection;
 import java.util.Set;
 
 /**

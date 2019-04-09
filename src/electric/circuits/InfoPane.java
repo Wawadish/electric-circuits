@@ -1,7 +1,7 @@
 package electric.circuits;
 
 import electric.circuits.component.BatteryComponent;
-import electric.circuits.data.ElectricComponent;
+import electric.circuits.component.ElectricComponent;
 import javafx.geometry.HPos;
 import javafx.geometry.Insets;
 import javafx.scene.control.Label;

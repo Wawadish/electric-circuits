@@ -1,6 +1,6 @@
 package electric.circuits;
 
-import electric.circuits.data.ComponentType;
+import electric.circuits.component.ComponentType;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.scene.control.ListCell;

@@ -1,6 +1,6 @@
 package electric.circuits;
 
-import electric.circuits.data.ElectricComponent;
+import electric.circuits.component.ElectricComponent;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 

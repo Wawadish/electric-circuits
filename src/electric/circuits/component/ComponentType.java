@@ -1,5 +1,6 @@
-package electric.circuits.data;
+package electric.circuits.component;
 
+import electric.circuits.component.ElectricComponent;
 import electric.circuits.component.BatteryComponent;
 import electric.circuits.component.DummyBatteryComponent;
 import electric.circuits.component.DummyComponent;

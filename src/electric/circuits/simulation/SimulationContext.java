@@ -2,12 +2,10 @@ package electric.circuits.simulation;
 
 import electric.circuits.Utils;
 import electric.circuits.component.BatteryComponent;
-import electric.circuits.data.BoundVariable;
-import electric.circuits.data.ElectricComponent;
-import electric.circuits.data.ElectricConnection;
-import electric.circuits.data.Variable;
-import electric.circuits.data.WireGroup;
-import electric.circuits.data.WireMap;
+import electric.circuits.component.ElectricComponent;
+import electric.circuits.component.ElectricConnection;
+import electric.circuits.wire.WireGroup;
+import electric.circuits.wire.WireMap;
 import java.util.HashSet;
 import java.util.IdentityHashMap;
 import java.util.Iterator;
