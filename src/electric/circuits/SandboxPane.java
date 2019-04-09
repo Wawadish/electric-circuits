@@ -17,6 +17,7 @@ import javafx.scene.input.TransferMode;
 import javafx.scene.layout.AnchorPane;
 
 /**
+ * The sandbox pane, where the circuit is built.
  *
  * @author Wawa, Tomer Moran
  */
@@ -256,7 +257,7 @@ public class SandboxPane extends AnchorPane {
 
 			Utils.debug("Component " + comp + ": " + current.get() + " A");
 		});
-		
+
 		return true;
 	}
 }

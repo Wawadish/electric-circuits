@@ -11,12 +11,11 @@ import javafx.scene.layout.Pane;
 import javafx.util.Callback;
 
 /**
+ * The side bar of the program, with a list of the component types.
  *
  * @author Wawa
  */
 public class SideBarPane extends Pane {
-
-	private static final Image PLACEHOLDER = new Image("file:assets/images/placeholder.png");
 
 	private final ListView<ListViewItem> listView = new ListView();
 
@@ -38,8 +37,9 @@ public class SideBarPane extends Pane {
 		listView.setOnDragDetected(e -> {
 			// Gets the currently selected item
 			ListViewItem item = listView.getSelectionModel().getSelectedItem();
-			if (item == null)
+			if (item == null) {
 				return;
+			}
 
 			Utils.startDrag(listView, item.getComponentType());
 		});
@@ -52,6 +52,11 @@ public class SideBarPane extends Pane {
 		getChildren().add(listView);
 	}
 
+	/**
+	 * Generates a cell factory for the {@code ListView}.
+	 *
+	 * @return
+	 */
 	private static Callback<ListView<ListViewItem>, ListCell<ListViewItem>> cellFactory() {
 		return param -> new ListCell<ListViewItem>() {
 			final ImageView imageView = new ImageView();
@@ -72,4 +77,27 @@ public class SideBarPane extends Pane {
 		};
 	}
 
+	public static class ListViewItem {
+
+		private final String name;
+		private final ComponentType componentType;
+
+		public ListViewItem(String name, ComponentType componentType) {
+			this.name = name;
+			this.componentType = componentType;
+		}
+
+		public String getName() {
+			return name;
+		}
+
+		public Image getImage() {
+			return componentType.getImage();
+		}
+
+		public ComponentType getComponentType() {
+			return componentType;
+		}
+
+	}
 }

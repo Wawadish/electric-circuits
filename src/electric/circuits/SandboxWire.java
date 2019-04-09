@@ -11,6 +11,8 @@ import javafx.scene.shape.Circle;
 import javafx.scene.shape.Line;
 
 /**
+ * Represents a wire on the GUI. SandboxWires can either be attached to a
+ * component, or they can be hanging.
  *
  * @author Tomer Moran
  */
